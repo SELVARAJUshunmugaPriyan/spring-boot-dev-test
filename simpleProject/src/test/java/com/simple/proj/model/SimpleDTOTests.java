@@ -26,12 +26,13 @@ public class SimpleDTOTests {
 		dto.setPhoneNumber("-");
 		dto.setAge(50);
 		dto.setEmailId("abc.def@example.com");
+		dto.setPostalCode("00000");
 		
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
 	
 	@Test
-	public void checkEmpIdNotNullTest()
+	void checkEmpIdNotNullTest()
 	{
 		dto.setEmpId(null);
 		
@@ -49,7 +50,7 @@ public class SimpleDTOTests {
 	}
 	
 	@Test
-	public void checkPhoneNumberNotEmptyTest()
+	void checkPhoneNumberNotEmptyTest()
 	{
 		dto.setPhoneNumber(null);
 		
@@ -70,7 +71,7 @@ public class SimpleDTOTests {
 	}
 	
 	@Test
-	public void checkNameNotBlankTest()
+	void checkNameNotBlankTest()
 	{
 		dto.setName(null);
 		
@@ -97,7 +98,7 @@ public class SimpleDTOTests {
 	}
 	
 	@Test
-	public void checkAgeBetweenMinMaxTest()
+	void checkAgeBetweenMinMaxTest()
 	{
 		dto.setAge(0);
 		
@@ -120,7 +121,7 @@ public class SimpleDTOTests {
 	}
 	
 	@Test
-	public void checkEmailIdValidAndNotBlankTest()
+	void checkEmailIdValidAndNotBlankTest()
 	{
 		// 1
 		dto.setEmailId(null);
@@ -186,6 +187,95 @@ public class SimpleDTOTests {
 		violations.forEach(x -> System.out.println(x.getMessage()));
 	}
 	
+	@Test
+	void checkPostalCodeNotBlankAndIsValid()
+	{
+		// 1
+		dto.setPostalCode(null);
+		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("1 " + x.getMessage()));
+		
+		// 2
+		dto.setPostalCode(new String()); // NotEmpty is unnecessary it is managed within @email
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("2 " + x.getMessage()));
+		
+		// 3
+		dto.setPostalCode(" "); // NotBlank is unnecessary it is managed within @email
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("3 " + x.getMessage()));
+		
+		// 4
+		dto.setPostalCode("aaaaa");
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("4 " + x.getMessage()));
+		
+		// 5
+		dto.setPostalCode("3.333"); // No error since it is not regex pattern and does not confuse
+									// it with . (any character) 
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("5 " + x.getMessage()));
+		
+		// 6
+		dto.setPostalCode("3333");
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("6 " + x.getMessage()));
+		
+		// 7
+		dto.setPostalCode("333333");
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("7 " + x.getMessage()));
+		
+		// 8
+		dto.setPostalCode("33333");
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("8 " + x.getMessage()));
+		
+		Assertions.assertTrue(violations.size() == 7);
+		violations.forEach(x -> System.out.println(x.getMessage()));
+	}
 	
+	@Test
+	void checkAddressLengthBounded()
+	{
+		// 1
+		dto.setAddress(null); // NotNull is not checked by @Size
+		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("1 " + x.getMessage()));
+		
+		// 2
+		dto.setAddress(new String());
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("2 " + x.getMessage()));
+		
+		// 3
+		dto.setAddress("0".repeat(101));
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("3 " + x.getMessage()));
+		
+		// 4
+		dto.setAddress("0".repeat(10));
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("4 " + x.getMessage()));
+		
+		// 5
+		dto.setAddress("0".repeat(100));
+		violations.addAll(validator.validate(dto));
+//		violations = validator.validate(dto);
+//		violations.forEach(x -> System.out.println("5 " + x.getMessage()));
+		
+		Assertions.assertTrue(violations.size() == 3);
+		violations.forEach(x -> System.out.println(x.getMessage()));
+	}
 	
 }
