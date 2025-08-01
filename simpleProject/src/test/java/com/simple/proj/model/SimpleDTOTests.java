@@ -26,7 +26,7 @@ public class SimpleDTOTests {
 		 .map(y -> "\"" + y.getMessage() + "\"" +
 				   " Failed for imput: (" +
 				   String.valueOf(y.getInvalidValue()) + ")")
-		 .forEach(logger::trace);
+		 .forEach(logger::info);
 		
 		return x;
 	}
