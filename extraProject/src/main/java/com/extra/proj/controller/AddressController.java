@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.extra.proj.model.AddressResponse;
+import com.extra.proj.model.EmployeeDetails;
 import com.extra.proj.service.AddressService;
 
 @RestController
@@ -21,5 +22,13 @@ public class AddressController {
 	{
 		return ResponseEntity.status(HttpStatus.OK)
 							 .body(addressService.getAddressByEmployeeId(employeeId));
+	}
+	
+	@GetMapping("/empDetails/{employeeId}")
+	public ResponseEntity<EmployeeDetails> getEmployeeDetailsByEmployeeId
+		(@PathVariable int employeeId)
+	{
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body(addressService.getEmployeeDetailsByEmployeeId(employeeId));
 	}
 }

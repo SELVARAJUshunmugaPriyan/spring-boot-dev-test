@@ -13,4 +13,6 @@ public class AddressResponse {
 	private int id;
 	private String city;
 	private String state;
+//	private String employeeDetails;
+	
 }
