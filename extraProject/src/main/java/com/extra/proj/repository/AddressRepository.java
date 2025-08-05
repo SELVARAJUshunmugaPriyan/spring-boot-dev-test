@@ -3,6 +3,7 @@ package com.extra.proj.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.extra.proj.model.Address;
@@ -18,4 +19,9 @@ public interface AddressRepository extends JpaRepository<Address, Integer>{
 	public Optional<EmployeeDetails> findEmployeeDetailsByEmployeeId(int employeeId);
 	
 	public Optional<Address> findByEmployeeId(int employeeId);
+	
+	@Modifying
+	@Query(value="INSERT INTO simple_schema.address(city, state, employee_id) "
+			+ "VALUES (?1, ?2, ?3)", nativeQuery=true)
+	public void saveAddress(String city, String state, int employeeId);
 }

@@ -4,9 +4,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.extra.proj.model.AddressRequest;
 import com.extra.proj.model.AddressResponse;
 import com.extra.proj.model.EmployeeDetails;
 import com.extra.proj.repository.AddressRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AddressService {
@@ -29,5 +32,14 @@ public class AddressService {
 	public EmployeeDetails getEmployeeDetailsByEmployeeId(int id)
 	{
 		return addressRepository.findEmployeeDetailsByEmployeeId(id).orElse(null);
+	}
+	
+	@Transactional
+	public AddressResponse postEmployeeWithEmployeeId(AddressRequest addressRequest)
+	{
+		addressRepository.saveAddress(addressRequest.getCity(), addressRequest.getState(),
+				 addressRequest.getEmployeeId());
+		
+		return getAddressByEmployeeId(addressRequest.getEmployeeId());
 	}
 }

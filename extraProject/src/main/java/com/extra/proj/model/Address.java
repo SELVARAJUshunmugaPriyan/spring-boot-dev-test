@@ -29,4 +29,5 @@ public class Address {
 	@OneToOne
 	@JoinColumn(name="employee_id")
 	private Employee employee;
+	
 }
