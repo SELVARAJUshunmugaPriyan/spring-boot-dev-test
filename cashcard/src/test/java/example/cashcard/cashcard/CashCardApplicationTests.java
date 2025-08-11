@@ -32,6 +32,7 @@ class CashCardApplicationTests {
                 .andExpect(jsonPath("$.owner").value("sarah1"));
     }
 
+    @SuppressWarnings("null")
     @Test
     @DirtiesContext
     void shouldCreateANewCashCard() throws Exception {
