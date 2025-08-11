@@ -29,17 +29,35 @@ public class CashCardController {
     }
 
     @PostMapping
-    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb) {
-        CashCard savedCashCard = this.cashCards.save(newCashCardRequest);
-        URI locationOfNewCashCard = ucb
-                .path("cashcards/{id}")
-                .buildAndExpand(savedCashCard.id())
-                .toUri();
-        return ResponseEntity.created(locationOfNewCashCard).body(savedCashCard);
+    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCard cashCardRequest,//newCashCardRequest, 
+        UriComponentsBuilder ucb, @CurrentOwner String owner) {
+            // CashCard savedCashCard = this.cashCards.save(newCashCardRequest);
+            CashCard cashCard = new CashCard(cashCardRequest.amount(), owner);
+            CashCard savedCashCard = this.cashCards.save(cashCard);
+            URI locationOfNewCashCard = ucb
+                    .path("cashcards/{id}")
+                    .buildAndExpand(savedCashCard.id())
+                    .toUri();
+            return ResponseEntity.created(locationOfNewCashCard).body(savedCashCard);
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<CashCard>> findAll() {
-        return ResponseEntity.ok(this.cashCards.findAll());
+    public ResponseEntity<Iterable<CashCard>> findAll(
+        // @CurrentSecurityContext(expression = "authentication")
+        // Authentication authentication) {
+        // @CurrentSecurityContext(expression = "authentication.name")
+        @CurrentOwner
+        String owner) {
+        // return ResponseEntity.ok(this.cashCards.findAll());
+        // var filtered = new ArrayList<CashCard>();
+        // this.cashCards.findAll().forEach(cashCard -> {
+        //     if (cashCard.owner().equals(authentication.getName())){
+        //         filtered.add(cashCard);
+        //     }
+        // });
+        // return ResponseEntity.ok(filtered);
+        // var result = this.cashCards.findByOwner(authentication.getName());
+        var result = this.cashCards.findByOwner(owner);
+        return ResponseEntity.ok(result);
     }
 }
