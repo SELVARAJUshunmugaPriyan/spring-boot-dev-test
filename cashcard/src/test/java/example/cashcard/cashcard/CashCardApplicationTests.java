@@ -37,13 +37,7 @@ class CashCardApplicationTests {
     void shouldCreateANewCashCard() throws Exception {
         String location = this.mvc.perform(post("/cashcards")
                         .contentType("application/json")
-                        .content(/*"""
-                        {
-                            "amount" : 250.00,
-                            "owner"  : "sarah1"
-                        }
-                        """*/
-                        """
+                        .content("""
                         {
                             "amount" : 250.00
                         }
