@@ -52,7 +52,6 @@ class CashCardApplicationTests {
         this.mvc.perform(get(location))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.amount").value(250.00))
-                // .andExpect(jsonPath("$.owner").value("sarah1"));
                 .andExpect(jsonPath("$.owner").value("esuez5"));
     }
 

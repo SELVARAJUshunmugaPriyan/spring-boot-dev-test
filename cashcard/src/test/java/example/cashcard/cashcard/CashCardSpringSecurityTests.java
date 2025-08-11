@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -39,7 +40,7 @@ public class CashCardSpringSecurityTests {
 
 	@Autowired
 	private MockMvc mvc;
-    
+
     @Test
     void shouldNotAllowTokensWithAnInvalidAudience() throws Exception {
         String token = mint((claims) -> claims.audience(List.of("https://wrong")));
@@ -72,6 +73,13 @@ public class CashCardSpringSecurityTests {
                 .andExpect(header().exists("WWW-Authenticate"))
                 .andExpect(jsonPath("$.errors..description").value(
                             containsInAnyOrder(containsString("Jwt expired"), containsString("aud claim is not valid"))));
+    }
+
+    @WithMockUser(username = "esuez5", authorities = {"SCOPE_cashcard:read"})
+    @Test
+    void shouldReturnForbiddenWhenCardBelongsToSomeoneElse() throws Exception {
+        this.mvc.perform(get("/cashcards/99"))
+            .andExpect(status().isForbidden());
     }
 
 	private String mint(Consumer<JwtClaimsSet.Builder> consumer) {
