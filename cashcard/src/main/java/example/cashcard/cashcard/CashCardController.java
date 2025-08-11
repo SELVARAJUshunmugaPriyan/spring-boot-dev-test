@@ -28,11 +28,9 @@ public class CashCardController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/{owner}")
-    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCardRequest cashCardRequest, @PathVariable String owner) {
-        CashCard cashCard = new CashCard(cashCardRequest.amount(), owner);
-        CashCard savedCashCard = this.cashCards.save(cashCard);
-        UriComponentsBuilder ucb = UriComponentsBuilder.newInstance();
+    @PostMapping
+    public ResponseEntity<CashCard> createCashCard(@RequestBody CashCard newCashCardRequest, UriComponentsBuilder ucb) {
+        CashCard savedCashCard = this.cashCards.save(newCashCardRequest);
         URI locationOfNewCashCard = ucb
                 .path("cashcards/{id}")
                 .buildAndExpand(savedCashCard.id())
