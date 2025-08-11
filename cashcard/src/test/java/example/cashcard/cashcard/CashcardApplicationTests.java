@@ -37,6 +37,7 @@ class CashCardApplicationTests {
                 .andExpect(status().isForbidden());
     }
 
+    @SuppressWarnings("null")
     @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @Test
     @DirtiesContext

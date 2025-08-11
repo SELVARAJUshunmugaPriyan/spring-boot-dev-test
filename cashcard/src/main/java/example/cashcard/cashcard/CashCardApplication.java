@@ -10,12 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * The application entry point
- *
- * @author Felipe Gutierrez
- * @author Josh Cummings
- */
 @EnableMethodSecurity
 @SpringBootApplication
 public class CashCardApplication {
