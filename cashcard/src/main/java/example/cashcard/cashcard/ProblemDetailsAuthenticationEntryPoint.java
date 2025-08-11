@@ -30,7 +30,6 @@ public class ProblemDetailsAuthenticationEntryPoint implements AuthenticationEnt
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
 			throws IOException, ServletException {
-                // response.setStatus(401);
                 this.delegate.commence(request, response, authException);
 
                 if (authException.getCause() instanceof JwtValidationException validation) {

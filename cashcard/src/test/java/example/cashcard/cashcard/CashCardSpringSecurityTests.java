@@ -39,15 +39,7 @@ public class CashCardSpringSecurityTests {
 
 	@Autowired
 	private MockMvc mvc;
-
-    // @Test
-    // void shouldRequireValidTokens() throws Exception {
-    //      String token = mint();
-    //     this.mvc.perform(get("/cashcards/100")
-    //                         .header("Authorization", "Bearer " + token))
-    //         .andExpect(status().isOk());
-    // }
-
+    
     @Test
     void shouldNotAllowTokensWithAnInvalidAudience() throws Exception {
         String token = mint((claims) -> claims.audience(List.of("https://wrong")));
@@ -81,10 +73,6 @@ public class CashCardSpringSecurityTests {
                 .andExpect(jsonPath("$.errors..description").value(
                             containsInAnyOrder(containsString("Jwt expired"), containsString("aud claim is not valid"))));
     }
-
-	// private String mint() {
-	// 	return mint(consumer -> {});
-	// }
 
 	private String mint(Consumer<JwtClaimsSet.Builder> consumer) {
 		JwtClaimsSet.Builder builder = JwtClaimsSet.builder()

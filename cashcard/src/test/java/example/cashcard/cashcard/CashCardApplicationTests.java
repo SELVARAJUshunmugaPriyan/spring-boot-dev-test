@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(username = "sarah1")
+@WithMockUser(username = "sarah1", authorities = {"SCOPE_cashcard:read"})
 class CashCardApplicationTests {
 
     @Autowired
@@ -33,6 +33,7 @@ class CashCardApplicationTests {
     }
 
     @SuppressWarnings("null")
+    @WithMockUser(username="esuez5", authorities = {"SCOPE_cashcard:read", "SCOPE_cashcard:write"})
     @Test
     @DirtiesContext
     void shouldCreateANewCashCard() throws Exception {
@@ -51,7 +52,8 @@ class CashCardApplicationTests {
         this.mvc.perform(get(location))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.amount").value(250.00))
-                .andExpect(jsonPath("$.owner").value("sarah1"));
+                // .andExpect(jsonPath("$.owner").value("sarah1"));
+                .andExpect(jsonPath("$.owner").value("esuez5"));
     }
 
     @Test
@@ -60,6 +62,5 @@ class CashCardApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$..owner").value(everyItem(equalTo("sarah1"))));
-                // .andExpect(jsonPath("$..owner").value(hasItem("esuez5")));
     }
 }
