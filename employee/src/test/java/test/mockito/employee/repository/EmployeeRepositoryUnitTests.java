@@ -12,10 +12,19 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 
 import test.mockito.employee.model.Employee;
 
 @DataJpaTest
+@TestPropertySource(properties = {
+		"spring.datasource.url=jdbc:h2:mem:unit_test_db",
+	    "spring.datasource.driver-class-name=org.h2.Driver",
+	    "spring.datasource.username=sa",
+	    "spring.datasource.password=password",
+	    "spring.jpa.hibernate.ddl-auto=create-drop",
+	    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect"
+})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EmployeeRepositoryUnitTests {
 
