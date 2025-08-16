@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableMethodSecurity
@@ -16,7 +15,7 @@ public class CashCardApplication {
 
 	@Bean
         @SuppressWarnings("unused")
-	SecurityFilterChain appSecurity(HttpSecurity http, AuthenticationEntryPoint entryPoint)
+	SecurityFilterChain appSecurity(HttpSecurity http, ProblemDetailsAuthenticationEntryPoint entryPoint)
 			throws Exception {
 		http
 			.authorizeHttpRequests((authorize) -> authorize
