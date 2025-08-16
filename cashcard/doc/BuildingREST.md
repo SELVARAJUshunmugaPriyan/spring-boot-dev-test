@@ -67,3 +67,49 @@ ________________________________
     Red: Write a failing test for the desired functionality.
     Green: Implement the simplest thing that can work to make the test pass.
     Refactor: Look for opportunities to simplify, reduce duplication, or otherwise improve the code without changing any behavior—to refactor.
+===================
+    REST, CRUD, 
+     and HTTP
+===================
+REST: Representational State Transfer. In a RESTful system, data objects are called Resource Representations. The purpose of a RESTful API (Application Programming Interface) is to manage the state of these Resources. Here “state” is “value” and “Resource Representation” is an “object” or "thing". Thus, REST is simply a method to manage the values of things via API.
+
+       +---------+
+       | Client  |
+       +---------+
+            ⇅
+     HTTP Methods:
+   GET / POST / PUT / DELETE
+       Responses:
+       JSON / XML
+            ⇅
+     +----------------+
+     |   REST API     |
+     |                |
+     +----------------+
+            ⇅
+     Internal Data Access:
+     Read / Write / Update
+            ⇅
+     +----------------+
+     |   Database     |
+     +----------------+
+CRUD stands for “Create, Read, Update, and Delete”.
+
+In HTTP (Hypertext Transfer Protocol (for REST)), a caller sends a Request to a URI. A web server receives the request, and routes it to a request handler. The handler creates a Response, which is then sent back to the caller.
+
+Request
+
+    Method (also called Verb)
+    URI (also called Endpoint)
+    Body
+
+Response
+
+    Status Code
+    Body
+
+Operation	API Endpoint	HTTP Method	    Response Status
+Create      /[api]          POST(w. ReqBody)201 (CREATED)
+Read	    /[api]/{id}     GET             200 (OK)
+Update	    /[api]/{id}     PUT(w. ReqBody) 204 (NO CONTENT)
+Delete	    /[api]/{id}     DELETE      	204 (NO CONTENT)
