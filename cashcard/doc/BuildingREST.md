@@ -133,3 +133,56 @@ CrudRepository is an interface without actual code. Used Spring Data framework u
        POST
 ===================
 In a REST API, an idempotent operation is one that even if it were to be performed several times, the resulting data on the server would be the same as if it had been performed only once. GET, PUT and DELETE are idempotent, whereas POST and PATCH are not.
+
+E.g.:
+return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .header(HttpHeaders.LOCATION, uriOfCashCard.toASCIIString())
+        .build();
+===================
+    Returning a 
+     list with 
+        GET
+===================
+Pagination in Spring (and many other frameworks) is to specify the page length (e.g. 10 items), and the page index (starting with 0).
+
+Benefits to use pagination with ordering:
+    Minimize cognitive overhead
+    Minimize future errors
+
+Page<Object> page2 = objectRepository.findAll(
+    PageRequest.of(
+        1,  // page index for the second page - indexing starts at 0
+        10, // page size (the last page might have fewer items)
+        Sort.by(new Sort.Order(Sort.Direction.DESC, "field"))));
+
+
+Pagination: Spring can parse out the `page` and `size` parameters if you pass a `Pageable` object to a PagingAndSortingRepository `find…()` method.
+Sorting: Spring can parse out the `sort` parameter, consisting of the field name and the direction separated by a comma. This data is part of the `Pageable` object.
+
+Compose a URI for the new endpoint:
+
+    Get the second page
+    /cashcards?page=1
+
+    …where a page has length of 3
+    /cashcards?page=1&size=3
+
+    …sorted by the current Cash Card balance
+    /cashcards?page=1&size=3&sort=amount
+
+    …in descending order (highest balance first)
+    /cashcards?page=1&size=3&sort=amount,desc
+
+Java impl.:
+@GetMapping
+private ResponseEntity<List<Object>> findAll(Pageable pageable) {
+   Page<Object> page = cashCardRepository.findAll(
+           PageRequest.of(
+                   pageable.getPageNumber(),
+                   pageable.getPageSize(),
+                   pageable.getSortOr(Sort.by(Sort.Direction.DESC, "amount"))));
+   return ResponseEntity.ok(page.getContent());
+}
+
+@DirtiesContext runs each test method with clean state
