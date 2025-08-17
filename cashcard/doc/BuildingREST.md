@@ -186,3 +186,29 @@ private ResponseEntity<List<Object>> findAll(Pageable pageable) {
 }
 
 @DirtiesContext runs each test method with clean state
+===================
+   Simple Spring
+      Security
+===================
+Principal - user (person or another program) of the api
+
+Authentication Session (or Auth Session) is created when a user gets authenticated. Sessions are implemented in many ways and a common mechanism is using a Session Token (a string of random characters) which is generated and placed in a Cookie. 
+                \- A Cookie is a set of data stored in a web client (such as a browser), and associated with a specific URI.
+                \- Cookies are automatically sent to the server with every request.
+                \- Cookies can persist for a certain amount of time even if the web page is closed and later re-visited.
+
+Spring Security provides Authorization via Role-Based Access Control (RBAC). This means that a Principal has a number of Roles. Each resource (or operation) specifies which Roles a Principal must have in order to perform actions with proper authorization.
+
+HTTP clients and servers implementing the Same Origin Policy (SOP). This policy states that only scripts which are contained in a web page are allowed to send requests to the origin (URI) of the web page. For example, let’s look at a typical banking web site. If a user is logged into their bank account and visits a malicious web page (in a different browser tab or window), the malicious requests could be sent (with the Auth Cookies) to the banking site.
+
+Cross-Origin Resource Sharing (CORS) is a way that browsers and servers can cooperate to relax the SOP. A server can explicitly allow a list of “allowed origins” of requests coming from an origin outside the server’s. @CrossOrigin used without arguments will allow all origins.
+
+Cross-Site Request Forgery (CSRF) or “Sea-Surf” or Session Riding is actually enabled by Cookies. A CSRF Token is different from an Auth Token because a unique token is generated on each request which prevents outside actor to insert itself into the conversation between the client and the server.
+
+Cross-Site Scripting (XSS) occurs when an attacker is able to trick the victim application into executing arbitrary code. These attacks can be mitigated by properly escaping the special HTML characters when the string is rendered.
+
+The @Configuration annotation tells Spring to use this class to configure Spring and Spring Boot itself. Any Beans specified in this class will now be available to Spring's Auto Configuration engine. Annotating a method returning a <Object> with the @Bean satisfies this expectation.
+
+Controller is returning 403 FORBIDDEN instead of a 500 INTERNAL_SERVER_ERROR because Spring Security is automatically implementing a best practice regarding how errors are handled by Spring Web.
+
+It's important to understand that any information returned from our application might be useful to a bad actor attempting to violate our application's security. For example: knowledge about actions that causes our application to crash -- a 500 INTERNAL_SERVER_ERROR.

@@ -2,6 +2,7 @@ package example.cashcard;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,9 @@ public class CashCardController {
     CashCardRepository cashCardRepository;
 
     @GetMapping("/{requestedId}")
-    public ResponseEntity<CashCard> findById(@PathVariable Long requestedId) throws IOException {
-        Optional<CashCard> cashCardOptional = cashCardRepository.findById(requestedId);
+    public ResponseEntity<CashCard> findById(@PathVariable Long requestedId, Principal principal) throws IOException {
+        Optional<CashCard> cashCardOptional = Optional.ofNullable(
+            cashCardRepository.findByIdAndOwner(requestedId, principal.getName()));
         
         if (cashCardOptional.isPresent())
             return ResponseEntity.ok(cashCardOptional.get());
@@ -38,8 +40,9 @@ public class CashCardController {
 
     @PostMapping
     public ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest,
-        UriComponentsBuilder ucb) {
-            CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
+        UriComponentsBuilder ucb, Principal principal) {
+            CashCard savedCashCard = cashCardRepository.save(new CashCard(
+                null, newCashCardRequest.amount(), principal.getName()));
             URI locationOfNewCashCard = ucb.path("/cashcards/{id}")
                                            .buildAndExpand(savedCashCard.id())
                                            .toUri();
@@ -47,8 +50,9 @@ public class CashCardController {
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable) {
-        Page<CashCard> page = cashCardRepository.findAll(
+    public ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable, Principal principal) {
+        Page<CashCard> page = cashCardRepository.findByOwner(
+            principal.getName(),
             PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
