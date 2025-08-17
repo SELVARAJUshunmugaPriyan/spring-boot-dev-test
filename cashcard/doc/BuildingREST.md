@@ -113,3 +113,18 @@ Create      /[api]          POST(w. ReqBody)201 (CREATED)
 Read	    /[api]/{id}     GET             200 (OK)
 Update	    /[api]/{id}     PUT(w. ReqBody) 204 (NO CONTENT)
 Delete	    /[api]/{id}     DELETE      	204 (NO CONTENT)
+===================
+  Repositories & 
+    Spring Data
+===================
+Separation of Concerns principle states that well-designed software should be modular, with each module having distinct and separate concerns.
+Controller is an abstraction of a web interface.
+
+A common architectural framework that divides these layers, typically by function or value, is called Layered Architecture. Controller layer is near Client (receives/responds web requests) while Repository layer is near the data store (reads-writes data store).
+
+SQL (Structured Query Language)
+JDBC (Java DB Connectivity)
+RDBMS (Relational DataBase Management Systems)
+ORM (Object-Relational Mapping framework)
+
+CrudRepository is an interface without actual code. Used Spring Data framework used (Spring Data JDBC) takes care of the implementation during the IoC container startup time.

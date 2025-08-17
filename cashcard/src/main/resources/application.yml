@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cashcard
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  devtools:
+    restart:
+      enabled: true
