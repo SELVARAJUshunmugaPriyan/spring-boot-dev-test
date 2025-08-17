@@ -128,3 +128,8 @@ RDBMS (Relational DataBase Management Systems)
 ORM (Object-Relational Mapping framework)
 
 CrudRepository is an interface without actual code. Used Spring Data framework used (Spring Data JDBC) takes care of the implementation during the IoC container startup time.
+===================
+   Implementing 
+       POST
+===================
+In a REST API, an idempotent operation is one that even if it were to be performed several times, the resulting data on the server would be the same as if it had been performed only once. GET, PUT and DELETE are idempotent, whereas POST and PATCH are not.

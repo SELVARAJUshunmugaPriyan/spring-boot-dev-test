@@ -14,12 +14,6 @@ public class CashCardJsonTest {
 
     @Autowired
     private JacksonTester<CashCard> json;
-    
-    @Test
-    void myFirstTest() {
-        // assertThat(1).isEqualTo(42);
-        assertThat(42).isEqualTo(42);
-    }
 
     @Test
     void cashCardSerializationTest() throws IOException {
