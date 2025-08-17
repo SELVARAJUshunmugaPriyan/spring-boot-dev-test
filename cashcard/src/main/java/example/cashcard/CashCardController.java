@@ -30,7 +30,7 @@ public class CashCardController {
 
     @GetMapping("/{requestedId}")
     // ResponseEntity<String> findById(@PathVariable Long requestedId) throws IOException {
-    ResponseEntity<CashCard> findById(@PathVariable Long requestedId) throws IOException {
+    public ResponseEntity<CashCard> findById(@PathVariable Long requestedId) throws IOException {
         // if (requestedId.equals(99L)) {
         //     CashCard cashCard = new CashCard(99L, 123.45);
         //     return ResponseEntity.ok(objectMapper.writeValueAsString(cashCard));
