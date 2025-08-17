@@ -230,3 +230,18 @@ PUT creates or replaces (updates) a resource at a specific request URI. For the 
 201 - CREATED
 204 - NO CONTENT (Update)
 200 - OK
+===================
+   Implementing 
+      DELETE
+===================
+Response Code	        Use Case
+
+204 NO CONTENT          The record exists, and
+                        The Principal is authorized, and
+                        The record was successfully deleted.
+
+404 NOT FOUND           The record does not exist (a non-existent ID was sent).
+
+404 NOT FOUND           The record does exist but the Principal is not the owner.
+
+With a hard delete, it’s gone forever. An alternative is soft delete which works by marking records as "deleted" in the database with IS_DELETED boolean or a DELETED_DATE timestamp. A repository needs to respect the “deleted” column and exclude records marked deleted from Read requests.
