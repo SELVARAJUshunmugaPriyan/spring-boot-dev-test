@@ -23,6 +23,7 @@ public class CashCardJsonTest {
     private CashCard[] cashCards;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp()
     {
         cashCards = Arrays.array(
