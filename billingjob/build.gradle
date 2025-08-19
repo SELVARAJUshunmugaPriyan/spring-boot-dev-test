@@ -30,6 +30,20 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+test {
+	jvmArgs = ['-Duser.timezone=Asia/Kolkata']
+
+	testLogging {
+		events "passed", "skipped", "failed"
+
+		showExceptions true
+		exceptionFormat "full"
+		showCauses true
+		showStackTraces true
+		showStandardStreams = true
+	}
+}
+
 bootRun {
 	jvmArgs = ['-Duser.timezone=Asia/Kolkata']
 }
