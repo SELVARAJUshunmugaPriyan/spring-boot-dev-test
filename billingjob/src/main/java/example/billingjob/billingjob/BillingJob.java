@@ -4,6 +4,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,9 +25,34 @@ public class BillingJob implements Job {
         return "BillingJob";
     }
 
+    // @Override
+    // public void execute(JobExecution execution) {
+    //     System.out.println("processing billing information");
+    //     execution.setStatus(BatchStatus.COMPLETED);
+    //     execution.setExitStatus(ExitStatus.COMPLETED);
+    //     this.jobRepository.update(execution);
+    // }
+
+    // @Override
+    // public void execute(JobExecution execution) {
+    //     try {
+    //         throw new Exception("Unable to process billing information");
+    //     } catch (Exception exception) {
+    //         execution.addFailureException(exception);
+    //         execution.setStatus(BatchStatus.ABANDONED);
+    //         execution.setExitStatus(ExitStatus.FAILED
+    //             .addExitDescription(exception.getMessage()));
+    //     } finally {
+    //         this.jobRepository.update(execution);
+    //     }
+    // }
+
     @Override
-    public void execute(JobExecution execution) {
-        System.out.println("processing billing information");
+    public void execute(JobExecution execution)
+    {
+        JobParameters jobParams = execution.getJobParameters();
+        String inputFile = jobParams.getString("input.file");
+        System.out.println("processing billing information from file " + inputFile);
         execution.setStatus(BatchStatus.COMPLETED);
         execution.setExitStatus(ExitStatus.COMPLETED);
         this.jobRepository.update(execution);

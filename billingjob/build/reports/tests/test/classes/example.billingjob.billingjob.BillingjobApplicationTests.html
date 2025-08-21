@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">1</div>
+<div class="counter">2</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.856s</div>
+<div class="counter">1.370s</div>
 <p>duration</p>
 </div>
 </td>
@@ -82,7 +82,12 @@
 </thead>
 <tr>
 <td class="success">testJobExecution(CapturedOutput)</td>
-<td class="success">0.856s</td>
+<td class="success">1.296s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testJobExecutionWithParams(CapturedOutput)</td>
+<td class="success">0.074s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -90,8 +95,8 @@
 <div class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>19:35:13.569 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [example.billingjob.billingjob.BillingjobApplicationTests]: BillingjobApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-19:35:13.690 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration example.billingjob.billingjob.BillingJobApplication for test class example.billingjob.billingjob.BillingjobApplicationTests
+<pre>20:02:17.815 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [example.billingjob.billingjob.BillingjobApplicationTests]: BillingjobApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+20:02:18.123 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration example.billingjob.billingjob.BillingJobApplication for test class example.billingjob.billingjob.BillingjobApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -102,20 +107,23 @@
 
  :: Spring Boot ::                (v3.5.4)
 
-2025-08-19T19:35:14.134+05:30  INFO 11132 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : Starting BillingjobApplicationTests using Java 21.0.8 with PID 11132 (started by monk_ in C:\Users\monk_\Documents\testing-workspace-spring-tools-for-eclipse-4.30.0.RELEASE\billingjob)
-2025-08-19T19:35:14.135+05:30  INFO 11132 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : No active profile set, falling back to 1 default profile: &quot;default&quot;
-JVM timeZone: Asia/Kolkata
-2025-08-19T19:35:14.791+05:30  INFO 11132 --- [billingjob] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-08-19T19:35:14.966+05:30  INFO 11132 --- [billingjob] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@36776c32
-2025-08-19T19:35:14.968+05:30  INFO 11132 --- [billingjob] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-08-19T19:35:15.240+05:30  INFO 11132 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : Started BillingjobApplicationTests in 1.398 seconds (process running for 2.527)
-2025-08-19T19:35:15.244+05:30  INFO 11132 --- [billingjob] [    Test worker] o.s.b.a.b.JobLauncherApplicationRunner   : Running default command line with: []
-2025-08-19T19:35:15.345+05:30  INFO 11132 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@1f536481] launched with the following parameters: [{}]
-processing billing information
-2025-08-19T19:35:15.356+05:30  INFO 11132 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@1f536481] completed with the following parameters: [{}] and the following status: [COMPLETED]
-2025-08-19T19:35:16.197+05:30  INFO 11132 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@1f536481] launched with the following parameters: [{}]
-processing billing information
-2025-08-19T19:35:16.202+05:30  INFO 11132 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@1f536481] completed with the following parameters: [{}] and the following status: [COMPLETED]
+2025-08-20T20:02:19.170+05:30  INFO 19860 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : Starting BillingjobApplicationTests using Java 21.0.8 with PID 19860 (started by monk_ in C:\Users\monk_\Documents\testing-workspace-spring-tools-for-eclipse-4.30.0.RELEASE\billingjob)
+2025-08-20T20:02:19.175+05:30  INFO 19860 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : No active profile set, falling back to 1 default profile: &quot;default&quot;
+JVM timeZone: Asia/Calcutta
+2025-08-20T20:02:20.915+05:30  INFO 19860 --- [billingjob] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-20T20:02:21.302+05:30  INFO 19860 --- [billingjob] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3d620a1
+2025-08-20T20:02:21.307+05:30  INFO 19860 --- [billingjob] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-20T20:02:21.943+05:30  INFO 19860 --- [billingjob] [    Test worker] e.b.b.BillingjobApplicationTests         : Started BillingjobApplicationTests in 3.457 seconds (process running for 6.394)
+2025-08-20T20:02:21.950+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.a.b.JobLauncherApplicationRunner   : Running default command line with: []
+2025-08-20T20:02:22.105+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] launched with the following parameters: [{}]
+processing billing information from file null
+2025-08-20T20:02:22.127+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] completed with the following parameters: [{}] and the following status: [COMPLETED]
+2025-08-20T20:02:23.394+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] launched with the following parameters: [{}]
+processing billing information from file null
+2025-08-20T20:02:23.405+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] completed with the following parameters: [{}] and the following status: [COMPLETED]
+2025-08-20T20:02:23.496+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] launched with the following parameters: [{'input.file':'{value=/some/input/file, type=class java.lang.String, identifying=true}','file.format':'{value=csv, type=class java.lang.String, identifying=false}'}]
+processing billing information from file /some/input/file
+2025-08-20T20:02:23.508+05:30  INFO 19860 --- [billingjob] [    Test worker] o.s.b.c.l.s.TaskExecutorJobLauncher      : Job: [example.billingjob.billingjob.BillingJob@697a0948] completed with the following parameters: [{'input.file':'{value=/some/input/file, type=class java.lang.String, identifying=true}','file.format':'{value=csv, type=class java.lang.String, identifying=false}'}] and the following status: [COMPLETED]
 </pre>
 </span>
 </div>
@@ -138,7 +146,7 @@ WARNING: Dynamic loading of agents will be disallowed by default in a future rel
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="https://www.gradle.org">Gradle 8.14.3</a> at 19 Aug 2025, 19:35:16</p>
+<a href="https://www.gradle.org">Gradle 8.14.3</a> at 20 Aug 2025, 20:02:23</p>
 </div>
 </div>
 </body>

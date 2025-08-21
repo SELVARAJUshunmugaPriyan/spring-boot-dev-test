@@ -10,7 +10,6 @@ public class BillingJobConfiguration {
     @Bean
     public Job billingJob() {
         return new BillingJob();
-        // return new BillingJobFail();
     }
 
 }

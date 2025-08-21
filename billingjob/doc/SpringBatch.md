@@ -93,3 +93,24 @@ Batch jobs can be initiated from - web container or command line.
 @SpringBootTest enables testing features from Spring Boot, which comprises loading the Spring application context and preparing the test context.
 
 OutputCaptureExtension (provided by Spring Boot) captures any output that is written to the standard output and the error output.
+===================
+   Job Instance
+===================
+In Spring Batch, a Job is the generic definition of a batch process which must be parametrized to create actual JobInstance(s). JobParameter(s) distinguishes JobInstance(s). Each JobInstance can have multiple JobExecution(s) if it fails.
+
+    Job 1---*> JobInstance(s) + JobParameters 1---*> JobExecution(s)
+===================
+   Testing Your
+       Job
+=================== 
+Testing the job from end to end is known as black-box testing.
+Random job parameters generation:
+>   JobLauncherTestUtils.getUniqueJobParameters
+>   JobLauncherTestUtils.getUniqueJobParametersBuilder
+Launching an entire job from end to end:
+>   JobLauncherTestUtils.launchJob
+Launching an individual step:
+>   JobLauncherTestUtils.launchStep
+JobRepositoryTestUtils is used to create or delete JobExecution(s) as needed during tests. It clears the batch metadata from the database before or after each test run.
+ExecutionContextTestUtils provides static methods to access attributes from the execution context of JobExecution and StepExecution. MetaDataInstanceFactory creates metadata entities, such as JobInstance and JobExecution, with the constraints defined by the batch domain model.
+JobScopeTestExecutionListener and StepScopeTestExecutionListener listeners are used to test components (like item readers, item writers, etc) that are scoped with the custom Spring scopes provided by Spring Batch which are JobScope and StepScope.
