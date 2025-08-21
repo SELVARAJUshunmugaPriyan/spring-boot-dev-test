@@ -32,7 +32,7 @@ class BillingjobApplicationTests {
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    private JobRepositoryTestUtils jobRepositoryTestUtils;    
+    private JobRepositoryTestUtils jobRepositoryTestUtils; 
 
     @Test
     void testJobExecution(CapturedOutput output) throws Exception {
