@@ -1,13 +1,14 @@
 package example.billingjob.billingjob;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+// import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.JobRepositoryTestUtils;
@@ -32,7 +33,12 @@ class BillingjobApplicationTests {
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    private JobRepositoryTestUtils jobRepositoryTestUtils; 
+    private JobRepositoryTestUtils jobRepositoryTestUtils;
+
+    @AfterEach
+    public void clearExecution() {
+        this.jobRepositoryTestUtils.removeJobExecutions();
+    }
 
     @Test
     void testJobExecution(CapturedOutput output) throws Exception {
@@ -50,7 +56,9 @@ class BillingjobApplicationTests {
     @Test
     void testJobExecutionWithParams(CapturedOutput output) throws Exception {
         // given
-        JobParameters jobParameters = new JobParametersBuilder()
+        JobParameters jobParameters = 
+            // new JobParametersBuilder()
+            this.jobLauncherTestUtils.getUniqueJobParametersBuilder()
                     .addString("input.file", "/some/input/file")
                     .addString("file.format", "csv", false)
                     .toJobParameters();
@@ -67,7 +75,9 @@ class BillingjobApplicationTests {
     @Test
     void autoTestJobExecution(CapturedOutput output) throws Exception {
         // given
-        JobParameters jobParameters = new JobParametersBuilder()
+        JobParameters jobParameters = 
+            // new JobParametersBuilder()
+            this.jobLauncherTestUtils.getUniqueJobParametersBuilder()
                     .addString("input.file", "/some/input/file")
                     .toJobParameters();
         

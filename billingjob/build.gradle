@@ -31,7 +31,8 @@ tasks.named('test') {
 }
 
 test {
-	// jvmArgs = ['-Duser.timezone=Asia/Kolkata']
+	
+	jvmArgs = ['-Duser.timezone=Asia/Kolkata']
 
 	testLogging {
 		events "passed", "skipped", "failed"

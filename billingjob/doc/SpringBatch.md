@@ -114,3 +114,4 @@ Launching an individual step:
 JobRepositoryTestUtils is used to create or delete JobExecution(s) as needed during tests. It clears the batch metadata from the database before or after each test run.
 ExecutionContextTestUtils provides static methods to access attributes from the execution context of JobExecution and StepExecution. MetaDataInstanceFactory creates metadata entities, such as JobInstance and JobExecution, with the constraints defined by the batch domain model.
 JobScopeTestExecutionListener and StepScopeTestExecutionListener listeners are used to test components (like item readers, item writers, etc) that are scoped with the custom Spring scopes provided by Spring Batch which are JobScope and StepScope.
+Test pollution occurs when tests leave artifacts behind that might impact other or future tests.

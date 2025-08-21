@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres_test
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+app:
+  timezone: Asia/Kolkata
