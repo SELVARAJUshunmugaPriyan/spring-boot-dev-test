@@ -266,3 +266,32 @@ Types of error -
     
     -   Transient error may not occur on subsequent runs (like a failed call to a flaky web service). soln.: Efficient retry policy.
     -   Non-transient will recur constantly (like an incorrect input data). soln.: Tolerate the bad input by skipping it for later analysis or reprocessing.
+===================
+   Handling non-
+  transient error
+    with skips    
+===================
+The skip feature in Spring Batch is specific to chunk-oriented steps. This feature covers all of the phases of the chunk-oriented processing model: when errors occur while reading, processing, or writing items. (Since chunk-writing involves bulk writing we cannot skip individual lines)
+
+Creating a fault-tolerant step is done by calling the <faultTolerant()> method on the <StepBuilder>. The <skip(Exception.class)> on the <StepBuilder> method defines which exception should cause the current item to be skipped. <skipLimit()> method is used to define the maximum number of items to skip.
+
+To validate skipped items,
+    
+    public interface SkipListener<T, S> extends StepListener {
+        default void onSkipInRead(Throwable t) { } <- Read refers to type of step
+        default void onSkipInWrite(S item, Throwable t) { } <- Write refers to type of step
+        default void onSkipInProcess(T item, Throwable t) { } <- Process refers to type of step
+    }
+
+... in FaultTolerantStepBuilder.listener(SkipListener) .
+
+To set skip policy:
+
+    @FunctionalInterface
+    public interface SkipPolicy {
+
+        boolean shouldSkip(Throwable t, long skipCount) throws SkipLimitExceededException;
+
+    }
+
+... in FaultTolerantStepBuilder.skipPolicy(SkipPolicy) .

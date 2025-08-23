@@ -17,6 +17,7 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,12 +58,17 @@ public class BillingJobConfiguration {
     public Step stepTwo(
         JobRepository jobRepository, JdbcTransactionManager transactionManager,
         ItemReader<BillingData> billingDataFileReader,
-        ItemWriter<BillingData> billingDataTableWriter
+        ItemWriter<BillingData> billingDataTableWriter,
+        BillingDataSkipListener skipListener
     ) {
         return new StepBuilder("fileIngestion", jobRepository)
                 .<BillingData, BillingData>chunk(100, transactionManager)
                 .reader(billingDataFileReader)
                 .writer(billingDataTableWriter)
+                .faultTolerant()
+                .skip(FlatFileParseException.class)
+                .skipLimit(10)
+                .listener(skipListener)
                 .build();
     }
 
@@ -156,5 +162,13 @@ public class BillingJobConfiguration {
                     "billingTotal"
                 )
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public BillingDataSkipListener skipListener(
+        @Value("#{jobParameters['skip.file']}") String skippedFile
+    ) {
+        return new BillingDataSkipListener(skippedFile);
     }
 }
