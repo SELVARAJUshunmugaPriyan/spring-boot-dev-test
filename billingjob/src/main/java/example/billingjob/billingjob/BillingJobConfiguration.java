@@ -122,7 +122,7 @@ public class BillingJobConfiguration {
         }
 
     @Bean
-    BillingDataProcessor billingDataProcessor() {
+    public BillingDataProcessor billingDataProcessor() {
         return new BillingDataProcessor();
     }
 
