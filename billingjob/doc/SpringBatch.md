@@ -4,6 +4,11 @@
 ===================
 Batch processing is a method of processing large volumes of data simultaneously, instead of processing them individually, in real time (in that case, we could talk about stream processing). This approach is widely used in many industries, including finance, manufacturing, and telecommunications. Batch applications are ephemeral, which means that once they've completed, they end.
 
+Use-cases:
+> Reading data from large number of flat files (massive upload/download)
+> Reading data from a large database table
+> Reading from a large number of messaging broker queues
+
 Challenges...
 > Handling large amounts of data efficiently
 > Tolerance to human errors and hardware deficiencies
@@ -176,4 +181,51 @@ Job Execution Flow - SimpleJob (sequential flow) or FlowJob (Conditional branchi
     return new StepBuilder("step1", jobRepository)
         .partitioner("worker", partitioner)
         .build();
+    }
+===================
+    Reading and
+   Writing Data
+===================
+Challenges:
+> Input file could be big and doesn't fit in memory.
+> R/W process is terminated abruptly.
+Spring Batch solves them using efficient and fault-tolerant chunk-oriented processing model. It is to process the datasource in chunks of a configurable size.
+
+    public class Chunk<T> implements Iterable<T> {
+        private List<T> items;
+        // methods to add and get items
+    }
+
+Each chunk of items (a line in a flat file, a record in a database table) is read and written within the scope of a transaction which means they are either committed together or rolled back togethe.
+
+If the transaction is committed, Spring Batch records, as part of the transaction, the execution progress (read count, write count, etc) in its metadata repository and uses that information to restart where it left off in case of a failure.
+
+If an error occurs while processing a chunk of items, then the transaction will be rolled back by the framework. The number of items to include in a chunk is called the commit-interval, which is the configurable size of a chunk that should be processed within the scope of a single transaction.
+
+    @FunctionalInterface
+    public interface ItemReader<T> {
+        @Nullable => can return null values
+        T read() throws Exception;
+    }
+
+    Reader can also return Strings or byte arrays from the file. Here, T denotes DomainType like Entity. e.g.: JdbcCursorItemReader, FlatFileItemReader
+
+    @FunctionalInterface
+    public interface ItemWriter<T> {
+        void write(Chunk<? extends T> chunk) throws Exception;
+    }
+
+    Unlike reading items which is done one item at a time, writing items is done in chunks. The reason behind it is because bulk writes are typically more efficient than single writes. e.g.: JdbcBatchItemWriter,  FlatFileItemWriter
+
+    @Bean
+    public Step ingestFile(
+              JobRepository jobRepository,
+              PlatformTransactionManager transactionManager,
+              ItemReader<T> reader,
+              ItemWriter<U> writer) {
+        return new StepBuilder("stepName", jobRepository)
+                .<T, U>chunk([size], transactionManager)
+                .reader(reader)
+                .writer(writer)
+                .build();
     }
