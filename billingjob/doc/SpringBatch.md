@@ -246,10 +246,23 @@ Types of processing:
 # Enriching Data
 # Validating Data
 # Filtering Data
-==================
+===================
    Batch Scoped
     Components    
 ===================
 Spring Batch provides two custom Spring bean scopes: job scope (@JobScope) and step scope (@StepScope). Batch-scoped beans are not created at application startup like singleton beans. Rather, they are created at runtime when the job or step is executed. A job-scoped bean will only be instantiated when the job is started. Similarly, a step-scoped bean won't be instantiated until the step is started. Since this type of bean is lazily instantiated at runtime, any runtime job parameter or execution context attribute can be resolved.
 Job parameters and execution context values can be resolved by using the Spring Expression Language (SpEL). It specifies which job parameter or context value should be bound in the bean definition method late at runtime.
 The @Value("#{jobParameters['input.file']}") notation instructs Spring Framework to resolve the value lazily from the jobParameters object.
+===================
+       State 
+     management
+        and 
+   restartability    
+===================
+State Management: inter-step restartability (refers to resuming a job from the last failed step) and inner-step restartability (resuming a failed step where it left off from within the step itself)
+Restartability is a included feature in Spring Batch.
+
+Types of error -
+    
+    -   Transient error may not occur on subsequent runs (like a failed call to a flaky web service). soln.: Efficient retry policy.
+    -   Non-transient will recur constantly (like an incorrect input data). soln.: Tolerate the bad input by skipping it for later analysis or reprocessing.
