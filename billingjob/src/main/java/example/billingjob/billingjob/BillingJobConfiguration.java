@@ -75,13 +75,18 @@ public class BillingJobConfiguration {
     @Bean
     public Step stepThree(JobRepository jobRepository,
         JdbcTransactionManager transactionManager, ItemReader<BillingData> billingDataTableReader,
-        ItemProcessor<BillingData, ReportingData> billingDataProcessor, ItemWriter<ReportingData> billingDataFileWriter)
+        ItemProcessor<BillingData, ReportingData> billingDataProcessor, 
+        ItemWriter<ReportingData> billingDataFileWriter, BillingDataRetryListener retryListener)
         {
             return new StepBuilder("reportGeneration", jobRepository)
                     .<BillingData, ReportingData>chunk(100, transactionManager)
                     .reader(billingDataTableReader)
                     .processor(billingDataProcessor)
                     .writer(billingDataFileWriter)
+                    .faultTolerant()
+                    .retry(PricingException.class)
+                    .retryLimit(100)
+                    // .listener(retryListener)
                     .build();
         }
 
@@ -170,5 +175,16 @@ public class BillingJobConfiguration {
         @Value("#{jobParameters['skip.file']}") String skippedFile
     ) {
         return new BillingDataSkipListener(skippedFile);
+    }
+
+    @Bean
+    public PricingService pricingService()
+    {
+        return new PricingService();
+    }
+
+    @Bean
+    public BillingDataRetryListener retryListener() {
+        return new BillingDataRetryListener();
     }
 }

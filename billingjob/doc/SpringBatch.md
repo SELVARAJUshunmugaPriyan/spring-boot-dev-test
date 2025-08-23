@@ -295,3 +295,36 @@ To set skip policy:
     }
 
 ... in FaultTolerantStepBuilder.skipPolicy(SkipPolicy) .
+===================
+     Handling
+  transient error
+   with retries    
+===================
+The retry feature in Spring Batch is based on the Spring Retry library which is available in most projects of Spring portfolio.
+Similar to the skip feature, the retry feature is designed for chunk-oriented steps, specifically for the processing and writing phases. The reading phase is not retryable. The <retry(Exception.class)> on the <StepBuilder> method defines which exception should cause the current item to be re-tried following <faultTolerant()>. <retryLimit()> method is used to define the maximum number of items to retry. <listener(RetryListenerImpl)> includes the listener in the <StepBuilder>. 
+
+    public interface RetryListener {
+
+    default <T, E extends Throwable> void onSuccess(  --> executes on successful retry
+            RetryContext context,
+            RetryCallback<T, E> callback,
+                    T result) {
+            }
+
+    default <T, E extends Throwable> void onError( --> executes on Error during retry
+            RetryContext context,
+            RetryCallback<T, E> callback,
+                Throwable throwable) {
+            }
+    }
+
+The RetryPolicy interface is part of Spring Retry and is defined as follows:
+
+    public interface RetryPolicy extends Serializable {
+        boolean canRetry(RetryContext context);
+        void registerThrowable(RetryContext context, Throwable throwable);
+    }
+
+... in FaultTolerantStepBuilder.retryPolicy(SkipPolicy) .
+
+Spring Retry already provides several ready-to-use implementations of this interface, including MaxAttemptsRetryPolicy and CircuitBreakerRetryPolicy.
