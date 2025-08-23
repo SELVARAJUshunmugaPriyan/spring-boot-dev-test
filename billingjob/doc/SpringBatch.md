@@ -229,3 +229,20 @@ If an error occurs while processing a chunk of items, then the transaction will 
                 .writer(writer)
                 .build();
     }
+===================
+    Processing
+       Data
+===================
+Input/Output systems aren't always a perfect match.
+    
+    @FunctionalInterface
+    public interface ItemProcessor<I, O> {
+        @Nullable
+        O process(@NonNull I item) throws Exception;
+    }
+
+Types of processing:
+# Transforming Data
+# Enriching Data
+# Validating Data
+# Filtering Data
