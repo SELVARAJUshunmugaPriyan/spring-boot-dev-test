@@ -115,3 +115,65 @@ JobRepositoryTestUtils is used to create or delete JobExecution(s) as needed dur
 ExecutionContextTestUtils provides static methods to access attributes from the execution context of JobExecution and StepExecution. MetaDataInstanceFactory creates metadata entities, such as JobInstance and JobExecution, with the constraints defined by the batch domain model.
 JobScopeTestExecutionListener and StepScopeTestExecutionListener listeners are used to test components (like item readers, item writers, etc) that are scoped with the custom Spring scopes provided by Spring Batch which are JobScope and StepScope.
 Test pollution occurs when tests leave artifacts behind that might impact other or future tests.
+===================
+   Understanding
+       Steps
+===================
+A Step is a domain object that encapsulates an independent, sequential phase (or a unit of work) of a batch Job. It is represented by the Step interface.The execute method is designed to throw a JobInterruptedException if the job should be interrupted at that particular step.
+                                 Step
+                                   ^
+                              implements
+        ---------------------------+-----------------------------
+        |                    |                  |               |
+-------------------  ------------------  --------------  ----------------
+| PartitionedStep |  |  TaskLet-Step  |  |  FlowStep  |  |    JobStep   |
+| (proc. i/p data |  |  (Simple Step) |  | (Logically |  |  (individual |
+|  set in partit- |  ------------------  |   grouped  |  |    job exec) |
+|      ions)      |          |           |    Steps)  |  ----------------
+-------------------         Uses         --------------
+                             |
+                             v
+                        -----------
+                        | Tasklet |
+                        ----------- 
+                             ^
+                             |
+                         implements
+                             |
+            ___________________________________
+            |                                 |
+            v                                 V
+    -----------------                -------------------
+    | ChunkOriented |                |  SystemCommand  |
+    |   Tasklet     |                |     Tasklet     |
+    -----------------                -------------------
+
+Tasklet is designed to execute one iteration of business logic with return value of <RepeatStatus.FINISHED/CONTINUABLE>. <StepContribution> provides counts of step execution and <ChunkContext> provides execution context.
+===================
+       Using
+       Steps
+===================
+Job Execution Flow - SimpleJob (sequential flow) or FlowJob (Conditional branching and parallel execution)
+    @Bean
+    public Job myJob(JobRepository jobRepository, Step step1, Step step2) {
+    return new JobBuilder("job", jobRepository)
+        .start(step1)
+        .next(step2)
+        .build();
+    }
+
+    If step1 fails, the job is terminated, and step2 won't be executed.
+
+    @Bean
+    public Step taskletStep(JobRepository jobRepository, Tasklet tasklet, PlatformTransactionManager transactionManager) {
+    return new StepBuilder("step1", jobRepository)
+        .tasklet(tasklet, transactionManager)
+        .build();
+    }
+
+    @Bean
+    public Step partitionedtStep(JobRepository jobRepository, Partitioner partitioner) {
+    return new StepBuilder("step1", jobRepository)
+        .partitioner("worker", partitioner)
+        .build();
+    }
