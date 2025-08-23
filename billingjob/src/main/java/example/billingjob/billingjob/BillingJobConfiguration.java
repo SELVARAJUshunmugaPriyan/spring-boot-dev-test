@@ -76,7 +76,7 @@ public class BillingJobConfiguration {
     public Step stepThree(JobRepository jobRepository,
         JdbcTransactionManager transactionManager, ItemReader<BillingData> billingDataTableReader,
         ItemProcessor<BillingData, ReportingData> billingDataProcessor, 
-        ItemWriter<ReportingData> billingDataFileWriter, BillingDataRetryListener retryListener)
+        ItemWriter<ReportingData> billingDataFileWriter)
         {
             return new StepBuilder("reportGeneration", jobRepository)
                     .<BillingData, ReportingData>chunk(100, transactionManager)
@@ -86,7 +86,6 @@ public class BillingJobConfiguration {
                     .faultTolerant()
                     .retry(PricingException.class)
                     .retryLimit(100)
-                    // .listener(retryListener)
                     .build();
         }
 
@@ -183,8 +182,4 @@ public class BillingJobConfiguration {
         return new PricingService();
     }
 
-    @Bean
-    public BillingDataRetryListener retryListener() {
-        return new BillingDataRetryListener();
-    }
 }
