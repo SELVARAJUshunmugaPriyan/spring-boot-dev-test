@@ -107,8 +107,10 @@ class BillingjobApplicationTests {
     void testJobStepExecution() throws Exception {
         // given
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("input.file", "src/main/resources/" +
-                                             "billing-2023-01.csv")
+                .addString("input.file", "input/billing-2023-01.csv")
+                .addString("output.file", "staging/billing-report-2023-01.csv")
+                .addJobParameter("data.year", 2023, Integer.class)
+                .addJobParameter("data.month", 1, Integer.class)
                 .toJobParameters();
         this.jobLauncherTestUtils.setJob(billingJobWithStep);
         
