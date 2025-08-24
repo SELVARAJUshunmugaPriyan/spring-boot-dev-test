@@ -6,21 +6,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SimpleController {
 
-	@GetMapping("/")
-	public String home()
+	@GetMapping
+	public String welcome()
 	{
-		return "login";
+		return "welcome.html";
+	}
+	
+	@GetMapping("/admin")
+	public String user()
+	{
+		return "admin.html";
+	}
+	
+	@GetMapping("/basic")
+	public String basic()
+	{
+		return "basic.html";
 	}
 	
 	@GetMapping("/login")
 	public String login()
 	{
-		return "home";
+		return "login.html";
 	}
 	
 	@GetMapping("/logout")
 	public String logout()
 	{
-		return "login";
+		return "logout.html";
 	}
 }
