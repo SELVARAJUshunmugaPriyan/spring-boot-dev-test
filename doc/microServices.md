@@ -274,4 +274,4 @@ Operations can have maximum of one terminal operation | N-number of intermediate
     > Logger: Logger is responsible for capturing logging information
     > Appender: publishing logging information in console or files
     > Layout: styling and formatting the logging information
-    > methods: info() and debug() W.. A.. I.. T.
+    > methods: trace(), warn(), error(), info() and debug()
