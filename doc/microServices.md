@@ -12,7 +12,7 @@
 # 3  What is Spring Boot?
     F/w ---> builds Restful APIs, web applications
            > Auto-configures embedded servers like Tomcat, embedded databases like h2
-           > Reduces the broilerplate codes
+           > Reduces the boilerplate codes
            > Internally handles dependencies
            > stand-alone application with less configuration
 # 4  Rest v. Soap
@@ -133,7 +133,7 @@ sending response                |  and @Controller
             - micro-services security - An API gateway puts a barrier in front of an application's backend
             - API authentication - Protection against hacking
             - rate limiting - Limits the number of API requests from a client 
-    > DisAdv : 
+    > DisAdv :
             - Response time - Increased response time as request passes through API gateway
             - reliability - Single-point-of-Failure
             - complexity - Routing logic can make communication with mmicroServices more complex
