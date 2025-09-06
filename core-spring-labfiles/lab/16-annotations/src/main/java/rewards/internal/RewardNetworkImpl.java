@@ -10,6 +10,8 @@ import rewards.internal.restaurant.Restaurant;
 import rewards.internal.restaurant.RestaurantRepository;
 import rewards.internal.reward.RewardRepository;
 
+import org.springframework.stereotype.Service;
+
 import common.money.MonetaryAmount;
 
 /**
@@ -24,13 +26,14 @@ import common.money.MonetaryAmount;
  * for dining" use case.
  */
 
-/* TODO-03: Let this class to be found in component-scanning
+/* TO-DO-03: Let this class to be found in component-scanning
  * - Annotate this class with an appropriate stereotype annotation
  *   to cause component-scanning to create a Spring bean from this class.
  * - Inject all 3 dependencies.  Decide if you should use field
  *   injection or constructor injection.
  */
 
+@Service("rewardNetwork")
 public class RewardNetworkImpl implements RewardNetwork {
 
 	private AccountRepository accountRepository;
