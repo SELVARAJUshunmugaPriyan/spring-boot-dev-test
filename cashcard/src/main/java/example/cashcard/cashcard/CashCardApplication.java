@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class CashCardApplication {
 
 	@Bean
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
 	SecurityFilterChain appSecurity(HttpSecurity http, ProblemDetailsAuthenticationEntryPoint entryPoint)
 			throws Exception {
 		http

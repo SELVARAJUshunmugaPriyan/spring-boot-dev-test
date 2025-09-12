@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: service-c
+    
+server:
+  port: 1236
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
