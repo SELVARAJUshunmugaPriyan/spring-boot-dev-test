@@ -1,12 +1,14 @@
 package com.api.gateway.api_gateway;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+// import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+// import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {ValidationAutoConfiguration.class})
+@EnableWebSecurity
+// @EnableAutoConfiguration(exclude = {ValidationAutoConfiguration.class})
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {

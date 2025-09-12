@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: api-gateway
+  datasource:
+    url: jdbc:mysql://localhost:3306/sql_queries
+    username: root
+    password: root
+  jpa.hibernate.ddl-auto: update
+  # security:
+  #   oauth2:
+  #     resourceserver:
+  #       jwt:
+  #         public-key-value: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzY9zZxZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8YwIDAQAB
