@@ -10,4 +10,4 @@ spring:
   #   oauth2:
   #     resourceserver:
   #       jwt:
-  #         public-key-value: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzY9zZxZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8Ywv1gG9ZzJZK9ZzQJv5z8YwIDAQAB
+  #         public-key-value: -----BEGIN PUBLIC KEY----- -----END PUBLIC KEY-----

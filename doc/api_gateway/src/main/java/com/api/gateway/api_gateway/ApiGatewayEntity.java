@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name="employee")
@@ -14,8 +15,25 @@ public class ApiGatewayEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int employeeId;
 
+    @Transient
+    @SuppressWarnings("unused")
+    private boolean sex;
+
+    public void setSex(boolean sex) {
+        this.sex = sex;
+        if (sex)
+            setGender("Male");
+        else
+            setGender("Female");
+    }
+
+    public boolean getSex() {
+        return getGender().equals("Male");
+    }
+
     private String name, dept, email, gender;
-    private int age, salary, managerId;
+    private int age, salary;
+    private Integer managerId;
 
     public int getEmployeeId() {
         return employeeId;
@@ -49,11 +67,11 @@ public class ApiGatewayEntity {
         this.email = email;
     }
 
-    public String getGender() {
+    private String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    private void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -73,11 +91,17 @@ public class ApiGatewayEntity {
         this.salary = salary;
     }
 
-    public int getManagerId() {
+    public Integer getManagerId() {
         return managerId;
     }
 
-    public void setManagerId(int managerId) {
+    public void setManagerId(Integer managerId) {
         this.managerId = managerId;
+    }
+
+    @Override
+    public String toString() {
+        return employeeId + " " + name + " " + dept + " " + email + " " + 
+               gender + " " + age + " " + salary + " " + managerId;
     }
 }
