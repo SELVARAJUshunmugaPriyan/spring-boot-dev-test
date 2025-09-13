@@ -156,6 +156,49 @@ public class Solutions {
         }
     }
 
+    // 5. Entity relationship
+    class Entity5Relationship {
+        // Explanation: Entity relationships refer to how different data entities are connected
+        // to each other within a relational database. These relationships are managed by 
+        // Spring Data JPA and Hibernate, which map the object-oriented relationships in your 
+        // Java code to the underlying database schema.
+        /*
+         * One-to-One (@OneToOne): This relationship exists when one entity instance is 
+         * associated with exactly one instance of another entity. For example, a User 
+         * entity might have a one-to-one relationship with a UserProfile entity, where each
+         * user has one profile and each profile belongs to one user.
+         * 
+         * One-to-Many / Many-to-One (@OneToMany, @ManyToOne): This is a common relationship
+         * where one entity instance can be associated with multiple instances of another 
+         * entity, while each of those multiple instances is associated with only one instance 
+         * of the first entity. For example, a Department can have many Employees, but each 
+         * Employee belongs to only one Department.
+         * 
+         * @OneToMany(mappedBy = "manager", ...): mappedBy = "manager" tells JPA that the manager
+         * field in the Employee entity is the owner of this relationship (i.e., the foreign key 
+         * is defined on the manager side).
+         * 
+         * Many-to-Many (@ManyToMany): In this relationship, multiple instances of one entity 
+         * can be associated with multiple instances of another entity. For example, a Book 
+         * can have multiple Authors, and an Author can write multiple Books.
+         * 
+         * @JoinColumn(name = "manager_id"): This specifies the foreign key column in the 
+         * Employee table that will store the ID of the manager.
+         * 
+         * NOTE: @Column(name="managerId", insertable=false, updatable=false)
+         *       private Integer managerId;
+         *          <- insertable, updatable is necessary to duplicate exception
+         * 
+         * @ManyToOne(fetch=FetchType.LAZY)
+            @JoinColumn(name="managerId")
+            @SuppressWarnings("unused")
+            private ApiGatewayEntity manager;
+
+            @OneToMany(mappedBy="manager", cascade=CascadeType.ALL, orphanRemoval=true)
+            private Set<ApiGatewayEntity> directReports = new HashSet<>();
+         */
+    }
+
     // 6. Eureka
     class Eureka6 {
     // Explanation: Eureka is a service discovery and registeration
