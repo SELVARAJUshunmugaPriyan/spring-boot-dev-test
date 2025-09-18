@@ -227,3 +227,146 @@ AOP proxy - an enhanced class that stands in place of your original with extra b
 
 In aspect @Configuration class, @EnableAspectJAutoProxy <- configures spring to recog and use @Aspect proxy.
 @Import can be used to import aspect class into main configuration class.
+
+Spring AOP uses AspectJ's pointcut expression language for selective application of advice.
+Common pointcut designator:
+    - execution(<method pattern>) {method pattern:
+        [modifiers] ReturnType [ClassType] MethodName (Arguments) [throws ExceptionType]
+    }
+    - execution(<pattern1>) || execution(<pattern2>)
+
+Example expression:
+    execution(* rewards.restaurant.*Service.find*(..))
+
+    ..where
+        execution -> designator
+        * (first) -> ReturnType
+        rewards.restuarant -> package
+        *Service -> ClassName
+        find* -> MethodName
+        .. -> arguments
+    
+    wildcards:
+        * -> matches once (return type, package, class, method name, argument)
+        .. -> matches zero or more (arguments or packages)
+
+    execution(void send*(rewards.Dining)) // Any method starting with send that takes a single Dining parameter and has a void return type
+    execution(* send(*)) // Any method named send that takes a single parameter
+    execution(* send(int, ..)) // Any method named send whose first parameter is an int (the ".." signifies 0 or more parameters may follow)
+    execution(void example.MessageServiceImpl.*(..)) // Any void method in the MessageServiceImpl class (including any sub-class)
+    execution(void example.MessageService.send(*)) // Any void send method taking one argument, in any object implementing MessageService (Works even if implementation changes)
+    execution(@javax.annotation.security.RolesAllowed void send*(..)) // Any void method whose starts with "send" that is annotated with the @RolesAllowed annotation
+    execution(* rewards.*.restaurant.*.*(..)) // There should be only one directory between rewards and restaurant
+    execution(* rewards..restaurant.*.*(..)) // There may be several directories between rewards and restaurant
+    execution(* *..restaurant.*.*(..)) // Any sub-package named 'restaurant' (starting .. is invalid *.. is valid)
+
+  # Before advice
+
+    -------                 ----------------            ------------
+    |Proxy|                 | BeforeAdvice |            |  Target  |
+    -------                 ----------------            ------------
+       |                            |                         |
+  --->| |                           |                         |
+      | |------------------------->| |                        |
+      | |<-------------------------| |                        |
+      | |--------------------------------------------------->| |
+      | |<---------------------------------------------------| |
+  <---| |                           |                         |
+
+  /*
+  code snippet:
+    @Aspect
+    @Component
+    public class PropertyChangeTracker {
+        private Logger logger = Logger.getLogger(getClass());
+        // Track calls to all setter methods
+        @Before("execution(void set*(*))")
+        public void trackChange() {
+            logger.info("Property about to change...");
+        }
+        // Audit all operations in the service package that return a Reward object
+        // Here return type of SpEL is matched to return type of method argument of 'reward'
+        @AfterReturning(value="execution(* service..*.*(..))", returning="reward")
+        public void audit(JoinPoint jp, Reward reward) {
+            auditService.logEvent(jp.getSignature()) +
+                " returns the following reqard object:" + reward.toString());
+        }
+        // Send an email every time a Repository class throws an exception of type 
+        // DataAccessException
+        @AfterThrowing(value="execution(* *..Repository.*(..))", throwing="e")
+        public void report(JoinPoint jp, DataAccessException e) {
+            mailService.emailFailure("Exception in repository", jp, e);
+            throw new RewardsException(e);
+        }
+        // Track calls to all update methods
+        @After("execution(void update*(..))")
+        public void trackUpdate() {
+            logger.info("An update has been attempted ...");
+        }
+        // Cache values returned by cacheable services
+        @Around("execution(@example.Cacheable * rewards.service..*.*(..))")
+        public Object cache(ProceedingJoinPoint point) throws Throwable {
+            Object value = cacheStore.get(CacheUtils.toKey(point));
+            if (value != null) return value;
+            value = point.proceed();
+            cacheStore.put(CacheUtils.toKey(point), value);
+        }
+    }
+  */
+
+  # After returning advice
+
+    -------               -----------------------         ------------
+    |Proxy|               | AfterReturingAdvice |         |  Target  |
+    -------               -----------------------         ------------
+       |                            |                         |
+  --->| |                           |                         |
+      | |--------------------------------------------------->| |
+      | |<--------------------------------Returning----------| |
+      | |------------------------->| |                        |
+      | |<-------------------------| |                        |
+  <---| |                           |                         |
+
+  # After throwing advice
+
+    -------            ------------------------            ------------
+    |Proxy|            |  AfterThrowingAdvice |            |  Target  |
+    -------            ------------------------            ------------
+       |                            |                         |
+  --->| |                           |                         |
+      | |--------------------------------------------------->| |
+      | |<...................................-------Excpetion| |
+      | |------------------------->| |                        |
+      | |<-------------------------| |                        |
+  <---| |                           |                         |
+  # After advice
+
+    -------                 ----------------            ------------
+    |Proxy|                 |  AfterAdvice |            |  Target  |
+    -------                 ----------------            ------------
+       |                            |                         |
+  --->| |                           |                         |
+      | |--------------------------------------------------->| |
+      | |<------------------------------Throwing or Returning| |
+      | |------------------------->| |                        |
+      | |<-------------------------| |                        |
+  <---| |                           |                         |
+  # Around advice
+
+    -------                 ----------------            ------------
+    |Proxy|                 |  AfterAdvice |            |  Target  |
+    -------                 ----------------            ------------
+       |                            |                         |
+  --->| |                           |                         |
+      | |------------------------->| |                        |
+      | |                          | |-----------proceed()-->| |
+      | |                          | |<----------------------| |                       
+      | |<-------------------------| |                        |
+  <---| |                           |                         |
+
+  Limitation of Spring AOP:
+  - Can only advise non-private methods
+  - Can only apply aspects to Spring beans (proxies are created by post-processor after 
+  bean initialization)
+  - When using proxies, suppose method a() calls method b() on the same class/interface
+    -   advice will never be executed for method b()
