@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -161,10 +162,10 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * Helper method that clears the cache of restaurants.
 	 * This method should be called when a bean is destroyed.
 	 *
-	 * TODO-10: Add a scheme to check if this method is being invoked
+	 * TO-DO-10: Add a scheme to check if this method is being invoked
 	 * - Add System.out.println to this method.
 	 *
-	 * TODO-11: Have this method to be invoked before a bean gets destroyed
+	 * TO-DO-11: Have this method to be invoked before a bean gets destroyed
 	 * - Re-run RewardNetworkTests.
 	 * - Observe this method is not called.
 	 * - Use an appropriate annotation to register this method for a
@@ -172,8 +173,10 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * - Re-run the test and you should be able to see
 	 *   that this method is now being called.
 	 */
+	@PreDestroy
 	public void clearRestaurantCache() {
 		restaurantCache.clear();
+		System.out.println("Restaurant cache is cleared");
 	}
 
 	/**

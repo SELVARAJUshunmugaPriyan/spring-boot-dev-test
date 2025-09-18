@@ -33,7 +33,7 @@ public class RewardNetworkImplTests {
 	 */
 	private RewardNetworkImpl rewardNetwork;
 
-	// TODO-09: Review the test setup
+	// TO-DO-09: Review the test setup
 	@BeforeEach
 	public void setUp() throws Exception {
 		// Create stubs to facilitate fast in-memory testing with

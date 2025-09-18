@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>2.7.18</version>
     </parent>
     <properties>
         <!-- Versions of other dependencies not in spring IO. -->
@@ -20,7 +20,7 @@
         <jamon.version>2.82</jamon.version>
         <spring-security.version>5.8.0</spring-security.version>
 
-        <java.version>11</java.version>
+        <java.version>21</java.version>
 
         <!-- Enable maven support for Servlet 3 - no web.xml -->
         <failOnMissingWebXml>false</failOnMissingWebXml>

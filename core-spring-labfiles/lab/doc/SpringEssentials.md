@@ -370,3 +370,43 @@ Example expression:
   bean initialization)
   - When using proxies, suppose method a() calls method b() on the same class/interface
     -   advice will never be executed for method b()
+=======================
+#                     #
+#   Testing Spring    #
+#    Applications     #
+#                     #
+=======================
+JUnit4 was monolith which basically a JAR file. JUnit5 requires Java8 JRE leverages lambda
+JUnit5 has separation of concerns like components: JUnit Platform (for launching testing f/
+w), JUnit Jupiter (extension for writing tests) and JUnit Vitage (backward compatability).
+JUnit4 -> JUnit5
+@Before -> @BeforeEach
+@BeforeClass -> @BeforeAll
+@After -> @AfterEach
+@AfterClass -> @AfterAll
+@Ignore -> @Disabled
+new annotations:
+@DisplayName
+@Nested
+@ParameterizedTest
+Use right annotations from correct package. JUnit5 ignores all JUnit4 annotations.
+Integration testing -> Tests the interaction of multiple successfully tested units. Test 
+application classes in context of their surrounding infrastructure:
+    - Out-of-container testing (no need to run up full App)
+    - Server infrastructure may be scaled down
+    - Test containers
+
+    Application (Production mode)   / TransferServiceTests (Integration Test)
+                                    | Inject by Spring
+                                    v
+                           TransferServiceImpl
+                                    | Inject by Spring
+                                    v
+                              JpaAccountRepo
+                Production DB       /   Test DB
+Spring support for testing:
+-   ApplicationContext is defined based on TestContext
+-   @ContextConfiguration defines the spring configuration to use
+-   Packaged as a separate module (spring-test.jar)
+-   @ExtendWith in JUnit5 supports multiple extensions extends architecture
+-   @SpringJUnitConfig -> @ExtendWith + @ContextConfiguration
