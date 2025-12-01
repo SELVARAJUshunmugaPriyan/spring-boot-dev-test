@@ -84,22 +84,22 @@ sending response                |  and @Controller
     server.port=[ANY_PORT_NUMBER]
 # 20 What is Swagger?
     > ...helps build, document and test Restful Web services.
-    > ...allows user to describle your entire api including all endpoints and operation on each endpoint.
+    > ...describes user the entire api including all endpoints and operation on each endpoint.
     > ...to understand capabilities of API without direct access to the source code.
     > ...use dependency in swagger
-    > ...activate swagger we need to use {swagger dependency }-
-    > by using the endpoint swagger-ui.html we can see the swagger-ui webpage of applicationin chrome.
+    > ...activate swagger we need to use swagger dependency
+    > by using the endpoint swagger-ui.html we can see the swagger-ui webpage of application in chrome.
     E.x.: http://localhost:8080/swagger-ui.html
 
 # 21 What is Rest Template and How it works?
-    > Rest template communicates between two APIs. It acts both as server and client.
+    > Rest template is used for synchronous communication between two APIs. It acts both as server and client.
     > To Autowire the rest template, need to create @Bean method in configuration class.
     > exchange() converts URL into response (url,HttpMethods.GET,null,String.class)
 
 # 22 Cors Policy error:
     > CORS (cross-origin resource sharing).
     > It's a protocol that defines some rules for sharing resources from a different origin/port.
-    > Since the client and server are separable applications, they're usually hosted on different domains.
+    > Since the client and server are separate applications, they're usually hosted on different domains.
     > Own client requesting data from the server might have different origins/port.
     @Cross origin -> use this in Class OR method LEVEL
 # 23 What is spring initializer?

@@ -46,7 +46,7 @@ Spring excels...
     - Spring projects created for common enterprise domains (Spring Security, Batch, Integration)
     - ...for new domains: Spring Data - NoSQL + JPA, Spring Cloud
     - Spring boot created to further simplify DevEx
-Comman use-cases...
+Common use-cases...
     - Spring deals with plumbing
     - Web Apps / Messaging / Persistance / Batch or Tasks / Integration or Streaming
 ======================
@@ -410,3 +410,32 @@ Spring support for testing:
 -   Packaged as a separate module (spring-test.jar)
 -   @ExtendWith in JUnit5 supports multiple extensions extends architecture
 -   @SpringJUnitConfig -> @ExtendWith + @ContextConfiguration
+=======================
+#                     #  
+#       JDBC          #
+#   Simplification    #
+#  with Jdbc Template #
+#                     #
+=======================
+Design pattern of JdbcTemplate outlines the skeleton of an algorithm
+- Leaves implementation and low-level resource management details
+- Reduces boilerplate codes
+Spring provides many templates: JdbcTemplate, JmsTemplate, RestTemplate and WebServiceTemplate
+Adv. of JdbcTemplate:
+- reduces boilerplate codes/common causes of bugs
+- handles SQLException
+/*
+int count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CUSTOMER", new 
+    RowMapper<Customer>() {
+        public Customer mapRow(ResultSet rs, int row) throws SQLException {}
+    } );
+// Steps performed:
+- Acquisition of the connection
+- Participation in the transaction
+- Execution of the statement
+- Processing of the result set
+- Maps each row
+- Handling exceptions
+- Release of the connection
+*/
+JdbcTemplate template = new JdbcTemplate(dataSource);
