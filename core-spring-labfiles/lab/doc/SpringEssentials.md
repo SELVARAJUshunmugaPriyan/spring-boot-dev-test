@@ -420,10 +420,11 @@ Spring support for testing:
 Design pattern of JdbcTemplate outlines the skeleton of an algorithm
 - Leaves implementation and low-level resource management details
 - Reduces boilerplate codes
-Spring provides many templates: JdbcTemplate, JmsTemplate, RestTemplate and WebServiceTemplate
+Spring provides many templates: JdbcTemplate, JmsTemplate, RestTemplate, RabbitMqTemplate, KafkaTemplate and WebServiceTemplate
 Adv. of JdbcTemplate:
 - reduces boilerplate codes/common causes of bugs
 - handles SQLException
+- ThreadSafe
 /*
 int count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CUSTOMER", new 
     RowMapper<Customer>() {
@@ -439,3 +440,66 @@ int count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CUSTOMER", new
 - Release of the connection
 */
 JdbcTemplate template = new JdbcTemplate(dataSource);
+
+In object-oriented programming, the template method is one of the behavioral design patterns which is a method in a superclass, usually an abstract superclass, and defines the skeleton of an operation in terms of a number of high-level steps. These steps are themselves implemented by additional helper methods in the same class as the template method. 
+=======================
+#                     #  
+#       JDBC          #
+#     Template        #
+#  Basic Usage        #
+#                     #
+=======================
+public class JdbcCustomerRepository implements CustomerRepository {
+    private JdbcTemplate jdbcTemplate;
+    public jdbcCustomerRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+    public int getCountOfNationalsOver(Nationality nationality, int age) {
+        String sql = "select count(*) from PERSON where age > ? and nationality = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, age, nationality.toString());
+        // jdbcTemplate.update(INSERT / UPDATE query) // Any non-SELECT SQL is run using update()
+    }
+}
+
+JdbcTemplate can query for
+- Simple types (int, long, String, Date)
+- Generic Maps
+- Domain Objects
+=======================
+#                     #  
+#  Writing with Res-  #
+#  ultSets using Ca-  #
+#  llbacks            #
+#                     #
+=======================
+methods -
+    queryForMap() // no need specific java object mapping
+    queryForList()
+
+ORM (Object Relational Mapping) offers first-level/second-level cache and Object query language. Spring provides RowMapper, RowCallbackHandler and ResultSetExtractor interface.
+
+    jdbcTemplate.queryForObject("select first_name, last_name from PERSON where id=?", (rs, rowNum) -> new Person(rs.getString("first_name"), rs.getString("last_name")), id)
+
+    jdbcTemplate.queryForObject("select first_name, last_name from PERSON where city=?", (ResultSetExtractor<Person>) (rs) -> {
+        Person person = null;
+        while (rs.next()) {
+            if (person == null)
+                person = new Person(rs.getString(), rs.getString());
+            person.addItem(mapitem(rs));
+        }
+        return person;
+    }, city)
+=======================
+#                     #  
+#  Exception Handli-  #
+#  ng                 #
+#                     #
+=======================
+Spring -> Method error code -> meaningful exceptions:
+
+> DataAccessException
+> DataAccessResourceException
+> CleanupFailureDataAccessException
+> OptimisticLockingFailureException
+> DataIntegrityViolationException
+> BadSqlGrammarException
