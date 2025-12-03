@@ -503,3 +503,146 @@ Spring -> Method error code -> meaningful exceptions:
 > OptimisticLockingFailureException
 > DataIntegrityViolationException
 > BadSqlGrammarException
+=======================
+#                     #  
+#  Why Transactions   #
+#  and Java supports  #
+#  them               #
+#                     #
+=======================
+APIs to manage transactions: JPA, JDBC and JMS
+ACID principle of DB:
+> Atomic: Each unit of work is an all-or-nothing operation
+> Consistent: Database Integrity constraints are never violated
+> Isolated: Isolating transactions from each other
+> Durable: Committed changes are permanent
+## Running non-Transactionally
+
++-------------------+--------------------+-----------------------+-------------------+---------------+---------------+
+| Reward Network    | Account Repository | Restaurant Repository | Reward Repository | DataSource    | Connection    |
++===================+====================+=======================+===================+===============+===============+
+|                   |                    |                       |                   |               |               |
+| findByCreditCard(String)                                                                                          |
+| ----------------->|                    |                       |                   |               |               |
+|                   | getConnection()    |                       |                   |               |               |  1. SELECT
+|                   | ------------------>|                       |                   | ------------->| connection 1  |
+|                   | <------------------|                       |                   | <-------------|               |
+|                   | close()            |                       |                   |               |               |
+|                   | ------------------>|                       |                   | ------------->|               |
+|                   | <------------------|                       |                   | <-------------|               |
+|                   |                    |                       |                   |               |               |
+| findByMerchantNumber(String)                                                                                      |
+| -------------------------------------->|                       |                   |               |               |
+|                   |                    | getConnection()       |                   |               |               |  2. SELECT
+|                   |                    | --------------------->|                   | ------------->| connection 2  |
+|                   |                    | <---------------------|                   | <-------------|               |
+|                   |                    | close()               |                   |               |               |
+|                   |                    | --------------------->|                   | ------------->|               |
+|                   |                    | <---------------------|                   | <-------------|               |
+|                   |                    |                       |                   |               |               |
+| updateBeneficiaries(Account)                                                                                      |
+| ----------------->|                    |                       |                   |               |               |
+|                   | getConnection()    |                       |                   |               |               |  3. UPDATE
+|                   | ------------------>|                       |                   | ------------->| connection 3  |
+|                   | <------------------|                       |                   | <-------------|               |
+|                   | close()            |                       |                   |               |               |
+|                   | ------------------>|                       |                   | ------------->|               |
+|                   | <------------------|                       |                   | <-------------|               |
+|                   |                    |                       |                   |               |               |
+| confirmReward(AccountContribution, Dining)                                                                        |
+| -------------------------------------------------------------->|                   |               |               |
+|                   |                    |                       | getConnection()   |               |               |  4. INSERT
+|                   |                    |                       | ----------------->| ------------->| connection 4  |
+|                   |                    |                       | <-----------------| <-------------|               |
+|                   |                    |                       | close()           |               |               |
+|                   |                    |                       | ----------------->| ------------->|               |
+|                   |                    |                       | <-----------------| <-------------|               |
+|                   |                    |                       |                   |               |               |
++-------------------+--------------------+-----------------------+-------------------+---------------+---------------+
+                                                                                                                   [DATABASE]
+
+Without transaction each data operation invokes a separate connection. In non-transactional data operations involving multiple data sources, partial failures can occur leading to inconsistencies across DBs. In transactional data operations, DB connections can be reused to perform multiple data operations more efficiently and consistently.
+=======================
+#                     #  
+#  Spring Transacti-  #
+#  on management      #
+#                     #
+=======================
+Transaction demarcation expressed via AOP.
+Main component PlatormTransactionManager abstracts implementation details
+With Separation-of-Concern, we can easily change the transaction context.
+Step: -
+    Define PlatormTransactionManager bean
+
+        @Bean
+        public DataSource dataSource(@Value(“${db.jndi}” String jndiName) {
+            JndiDataSourceLookup lookup = new JndiDataSourceLookup();
+            return lookup.getDataSource(jndiName);
+        }
+
+    Java Naming and Directory Interface (JNDI) is a Java API that provides naming and directory functionality to Java applications
+
+        @Bean
+        public PlatormTransactionManager  transactionManager(DataSource dataSource) 
+        {
+	        return new DataSourceTransactionManager(datasource);
+        }
+
+Add @EnableTransactionManagement to configuration class. It defines a Bean Post-Processor - proxies @Transactional(timeout = X (seconds)) beans
+
+Base interface: PlatormTransactionManager 
+Implementations: DataSourceTransactionManager, JmsTransactionManager, JpaTransactionManager, JtaTransactionManager, WebLogicJtaTransactionManager,
+WebSphereUoWTransactionManager
+
+@Transactional demarcates data operations in a method defining atomic unit-of-work.
+
+                                             +-----------------------+
+                                             | Transaction Manager   |
+                                             | (begin, commit, ...)  |
+                                             +-----------------------+
+                                                  ^          |
+                                                  |          |
+                                                  |  (Begin) | (Commit/Rollback)
+                                                  |          V
++-----------------------+    (Request)      +-----------------------------------------+
+| Caller                | ----------------> | (A) Spring TransactionInterceptor       |
+| (Uses Proxy Reference)|                   |     (The 'Around' Advice)               |
++-----------------------+                   |-----------------------------------------|
+                                            | (B) Delegates Call (Target Execution)   |
+                                            |                                         |
+                                            | +-------------------------------------+ |
+                                            | | (C) Target: TransferServiceImpl     | |
+                                            | |     (The actual business logic)     | |
+                                            | +-------------------------------------+ |
+                                            |                                         |
+                                            +-----------------------------------------+
+                                            ^                                         ^
+                                            |           SPRING PROXY WRAPPER          |
+                                            +-----------------------------------------+
+
+Transaction steps : -
+    Transaction starts before entering the method
+    Commit at the end of the method
+    Rollback if RuntimeException (default behavior)
+        Can be overridden
+        Checked exceptions do not cause Rollback
+Transaction context holds underlying JDBC connection, Hibernate sessions and JTA work. JdbcTemplate used within transaction uses provided connection, to access it - DataSourceUtils.getConnection(dataSource)
+=======================
+#                     #  
+#  Configure Transa-  #
+#  ction Propagation  #
+#                     #
+=======================
+What should happen if parent transactional method calls another child transactional method
+There is 7 level of propagation - REQUIRED / REQUIRES_NEW / MANDATORY
+Different execution pattern available : -
+Join first transaction
+Start new sub transaction
+@Transactional(propagation=Propagation.REQUIRED(default)) - join existing transaction
+Propagation.REQUIRES_NEW - create separate sub transaction
+Propagation.SUPPORTS - uses an existing transaction if available, otherwise runs without one Propagation.MANDATORY - requires an existing transaction, otherwise throws an exception Propagation.NOT_SUPPORTED - runs without a transaction, suspending an existing one Propagation.NEVER - runs without a transaction, but throws an exception if one is active
+– Setup Rollback Rules and Testing support
+RuntimeException - DataAccessException and HibernateException -> Rollback
+@Transactional(rollbackFor = MyCheckedException.class,noRollbackFor={MailException.class, MySpecificRuntimeException.class})
+@Test can be combined with @Transactional to always rollback after completing the test
+@Transactional class can have @Commit methods to commit particular methods
