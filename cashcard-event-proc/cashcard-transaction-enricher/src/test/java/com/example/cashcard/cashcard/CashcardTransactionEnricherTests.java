@@ -20,10 +20,10 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.cashcard.cashcard.domain.ApprovalStatus;
+import com.example.cashcard.cashcard.domain.CardHolderData;
 import com.example.cashcard.cashcard.domain.CashCard;
 import com.example.cashcard.cashcard.domain.EnrichedTransaction;
 import com.example.cashcard.cashcard.domain.Transaction;
-import com.example.cashcard.cashcard.domain.CardHolderData;
 import com.example.cashcard.cashcard.service.EnrichmentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
