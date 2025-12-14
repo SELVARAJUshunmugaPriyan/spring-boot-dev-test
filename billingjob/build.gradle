@@ -52,3 +52,7 @@ test {
         showStandardStreams = false
     }
 }
+
+// bootRun {
+// 	jvmArgs = ['-Duser.timezone=Asia/Kolkata']
+// }
