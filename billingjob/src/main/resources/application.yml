@@ -1,13 +1,7 @@
 spring:
   application:
-    name: billingjob
+    name: billing-job
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: root
-    driver-class-name: org.postgresql.Driver
-  batch:
-    job:
-      name: BillingJobWithStep
-app:
-  timezone: Asia/Kolkata
+    password: postgres

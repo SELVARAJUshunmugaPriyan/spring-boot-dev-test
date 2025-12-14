@@ -4,9 +4,9 @@
 For further reference, please consider the following sections:
 
 * [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/3.5.4/gradle-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.5.4/gradle-plugin/packaging-oci-image.html)
-* [Spring Batch](https://docs.spring.io/spring-boot/3.5.4/how-to/batch.html)
+* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/4.0.0/gradle-plugin)
+* [Create an OCI image](https://docs.spring.io/spring-boot/4.0.0/gradle-plugin/packaging-oci-image.html)
+* [Spring Batch](https://docs.spring.io/spring-boot/4.0.0/how-to/batch.html)
 
 ### Guides
 The following guides illustrate how to use some features concretely:
