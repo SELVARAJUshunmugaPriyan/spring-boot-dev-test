@@ -8,6 +8,7 @@ class BillingJobApplicationTests {
 
 	@Test
 	void contextLoads() {
+		//
 	}
 
 }
