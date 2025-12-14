@@ -38,6 +38,9 @@ tasks.named('test') {
 // This section causes useful test output to go to the terminal.
 test {
     testLogging {
+
+		jvmArgs = ['-Duser.timezone=Asia/Kolkata']
+
         events "passed", "skipped", "failed" //, "standardOut", "standardError"
 
         showExceptions true
