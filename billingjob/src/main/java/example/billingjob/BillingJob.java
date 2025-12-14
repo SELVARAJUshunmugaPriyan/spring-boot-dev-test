@@ -9,6 +9,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@SuppressWarnings("null")
 public class BillingJob implements Job {
 
     private JobRepository jobRepository;
