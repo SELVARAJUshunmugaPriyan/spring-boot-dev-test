@@ -4,6 +4,6 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    # password: s@J@{2zYwdCJiT,=
+    # password: bugjFeFc1tPAq81K
 app:
   timezone: Asia/Kolkata
