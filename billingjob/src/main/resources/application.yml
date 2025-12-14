@@ -5,3 +5,5 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     # password: s@J@{2zYwdCJiT,=
+app:
+  timezone: Asia/Kolkata
