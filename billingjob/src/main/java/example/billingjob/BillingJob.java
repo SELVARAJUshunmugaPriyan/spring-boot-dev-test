@@ -5,6 +5,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,12 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings("null")
 public class BillingJob implements Job {
 
+    @Autowired
     private JobRepository jobRepository;
-
-    public BillingJob(JobRepository jobRepository)
-    {
-        this.jobRepository = jobRepository;
-    }
     
     @Override
     public String getName()
