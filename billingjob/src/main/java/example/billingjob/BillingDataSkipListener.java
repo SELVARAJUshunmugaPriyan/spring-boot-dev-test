@@ -8,6 +8,7 @@ import java.nio.file.StandardOpenOption;
 
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.item.file.FlatFileParseException;
+import org.springframework.lang.NonNull;
 
 public class BillingDataSkipListener implements SkipListener<BillingData, BillingData> {
     
@@ -19,7 +20,7 @@ public class BillingDataSkipListener implements SkipListener<BillingData, Billin
     }
 
     @Override
-    public void onSkipInRead(Throwable throwable)
+    public void onSkipInRead(@NonNull Throwable throwable)
     {
         if (throwable instanceof FlatFileParseException exception) {
             String rawLine = exception.getInput();
@@ -27,9 +28,17 @@ public class BillingDataSkipListener implements SkipListener<BillingData, Billin
             String skippedLine = lineNumber + "|" + rawLine + System.lineSeparator();
             try {
                 Files.writeString(skippedItemsFile, skippedLine, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to write skipped item " + skippedLine);
+            } catch (IOException _) {
+                throw new SkipListenerException("Unable to write skipped item " + skippedLine);
             }
+        }
+    }
+
+    private class SkipListenerException extends RuntimeException
+    {
+        public SkipListenerException(String msg)
+        {
+            super(msg);
         }
     }
 }
