@@ -4,6 +4,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,34 +24,14 @@ public class BillingJob implements Job {
     }
 
     @Override
-    public void execute(JobExecution jobExecution)
+    public void execute(JobExecution execution)
     {
-        log.info("processing billing information");
-        jobExecution.setStatus(BatchStatus.COMPLETED);
-        jobExecution.setExitStatus(ExitStatus.COMPLETED);
-        jobRepository.update(jobExecution);
+        JobParameters jobParameters = execution.getJobParameters();
+        String inputFile = jobParameters.getString("input.file");
+        log.info("processing billing information from file " + inputFile);
+        execution.setStatus(BatchStatus.COMPLETED);
+        execution.setExitStatus(ExitStatus.COMPLETED);
+        jobRepository.update(execution);
     }
 
-    public void executeV1(JobExecution jobExecution)
-    {
-        log.info("processing billing information");
-        try {
-            throw new BillingJobException("Unable to process billing information");
-        } catch (BillingJobException exception) {
-            jobExecution.addFailureException(exception);
-            jobExecution.setExitStatus(ExitStatus.FAILED.addExitDescription(
-                exception.getMessage()
-            ));
-        } finally {
-            jobRepository.update(jobExecution);
-        }
-    }
-
-    private class BillingJobException extends RuntimeException
-    {
-        public BillingJobException(String message)
-        {
-            super(message);
-        }
-    }
 }
