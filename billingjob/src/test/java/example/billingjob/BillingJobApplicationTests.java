@@ -3,6 +3,9 @@ package example.billingjob;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,13 +40,11 @@ class BillingJobApplicationTests {
 	@Test
 	void testJobExecution(CapturedOutput output) throws Exception {
 		JobParameters jobParameters = this.jobLauncherTestUtils.getUniqueJobParametersBuilder()
-				.addString("input.file", "/some/input/file")
+				.addString("input.file", "src/main/resources/billing-2023-01.csv")
 				.toJobParameters();
 		JobExecution jobExecution = this.jobLauncherTestUtils.launchJob(jobParameters);
-		assertTrue(output.getOut().contains("processing billing information "
-			+ "from file /some/input/file"
-		));
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+		assertTrue(Files.exists(Paths.get("staging", "billing-2023-01.csv")));
 	}
 
 }

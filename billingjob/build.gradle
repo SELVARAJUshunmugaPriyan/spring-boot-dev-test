@@ -39,7 +39,8 @@ tasks.named('test') {
 test {
     testLogging {
 
-		jvmArgs = ['-Duser.timezone=Asia/Kolkata', '-Dspring.datasource.password=root']
+		jvmArgs = ['-Duser.timezone=Asia/Kolkata', '-Dspring.datasource.password=root',
+			'-Dspring.batch.job.enabled=false']
 
         events "passed", "skipped", "failed" //, "standardOut", "standardError"
 
