@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: billing-job
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres_test
+    username: postgres
+app:
+  timezone: Asia/Kolkata

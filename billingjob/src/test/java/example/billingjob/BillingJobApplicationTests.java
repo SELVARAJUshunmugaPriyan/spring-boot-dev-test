@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +22,12 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.NonNull;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 @SpringBatchTest
 @SpringBootTest
+@ActiveProfiles("test")
 @ExtendWith(OutputCaptureExtension.class)
 class BillingJobApplicationTests {
 
@@ -52,8 +55,11 @@ class BillingJobApplicationTests {
 				.toJobParameters();
 		JobExecution jobExecution = this.jobLauncherTestUtils.launchJob(jobParameters);
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-		assertTrue(Files.exists(Paths.get("staging", "billing-2023-01.csv")));
 		assertEquals(1000, JdbcTestUtils.countRowsInTable(jdbcTemplate, "BILLING_DATA"));
+
+		Path billingReport = Paths.get("staging", "billing-2023-01.csv");
+		assertTrue(Files.exists(billingReport));
+		assertEquals(781, Files.lines(billingReport).count());
 	}
 
 }
