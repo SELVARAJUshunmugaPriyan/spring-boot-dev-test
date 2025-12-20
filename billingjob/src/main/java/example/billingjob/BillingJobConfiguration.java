@@ -52,6 +52,7 @@ public class BillingJobConfiguration {
 
     }
 
+    @SuppressWarnings("null")
     @Bean
     @StepScope
     public JdbcCursorItemReader<BillingData> billingDataTableReader(
