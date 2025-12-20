@@ -28,7 +28,29 @@ public class BillingJob implements Job {
         log.info("processing billing information");
         jobExecution.setStatus(BatchStatus.COMPLETED);
         jobExecution.setExitStatus(ExitStatus.COMPLETED);
-        this.jobRepository.update(jobExecution);
+        jobRepository.update(jobExecution);
     }
 
+    public void executeV1(JobExecution jobExecution)
+    {
+        log.info("processing billing information");
+        try {
+            throw new BillingJobException("Unable to process billing information");
+        } catch (BillingJobException exception) {
+            jobExecution.addFailureException(exception);
+            jobExecution.setExitStatus(ExitStatus.FAILED.addExitDescription(
+                exception.getMessage()
+            ));
+        } finally {
+            jobRepository.update(jobExecution);
+        }
+    }
+
+    private class BillingJobException extends RuntimeException
+    {
+        public BillingJobException(String message)
+        {
+            super(message);
+        }
+    }
 }
