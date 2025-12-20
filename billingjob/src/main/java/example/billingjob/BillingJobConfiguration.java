@@ -32,9 +32,15 @@ import org.springframework.lang.NonNull;
 public class BillingJobConfiguration {
 
     @Bean
-    public BillingDataProcessor billingDataProcessor()
+    public PricingService pricingService()
     {
-        return new BillingDataProcessor();
+        return new PricingService();
+    }
+
+    @Bean
+    public BillingDataProcessor billingDataProcessor(PricingService pricingService)
+    {
+        return new BillingDataProcessor(pricingService);
     }
 
     @Bean
@@ -159,6 +165,9 @@ public class BillingJobConfiguration {
             .reader(billingDataTableReader)
             .processor(billingDataProcessor)
             .writer(billingDataFileWriter)
+            .faultTolerant()
+            .retry(PricingException.class)
+            .retryLimit(100)
             .build();
     }
 
