@@ -4,5 +4,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
+  batch:
+    job:
+      enabled: false
 app:
   timezone: Asia/Kolkata

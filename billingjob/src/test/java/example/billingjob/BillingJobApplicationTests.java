@@ -52,12 +52,15 @@ class BillingJobApplicationTests {
 	void testJobExecution(CapturedOutput output) throws Exception {
 		JobParameters jobParameters = this.jobLauncherTestUtils.getUniqueJobParametersBuilder()
 				.addString("input.file", "src/main/resources/billing-2023-01.csv")
+				.addString("output.file", "staging/billing-report-2023-01.csv")
+				.addJobParameter("data.year", 2023, Integer.class)
+				.addJobParameter("data.month", 1, Integer.class)
 				.toJobParameters();
 		JobExecution jobExecution = this.jobLauncherTestUtils.launchJob(jobParameters);
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 		assertEquals(1000, JdbcTestUtils.countRowsInTable(jdbcTemplate, "BILLING_DATA"));
 
-		Path billingReport = Paths.get("staging", "billing-2023-01.csv");
+		Path billingReport = Paths.get("staging", "billing-report-2023-01.csv");
 		assertTrue(Files.exists(billingReport));
 		assertEquals(781, Files.lines(billingReport).count());
 	}
