@@ -1,7 +1,5 @@
 package rewards.internal.reward;
 
-import java.util.Random;
-
 import rewards.AccountContribution;
 import rewards.Dining;
 import rewards.RewardConfirmation;

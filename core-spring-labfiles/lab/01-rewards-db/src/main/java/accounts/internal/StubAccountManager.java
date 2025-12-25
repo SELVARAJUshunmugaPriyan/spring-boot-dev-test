@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.orm.ObjectRetrievalFailureException;
-
 import rewards.internal.account.Account;
 import rewards.internal.account.Beneficiary;
 

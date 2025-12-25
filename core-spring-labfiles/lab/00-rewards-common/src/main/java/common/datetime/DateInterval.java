@@ -1,6 +1,5 @@
 package common.datetime;
 
-@SuppressWarnings("FieldMayBeFinal")
 public class DateInterval {
 
 	private SimpleDate start;
