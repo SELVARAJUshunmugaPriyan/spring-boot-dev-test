@@ -1,17 +1,18 @@
 package accounts.web;
 
 import accounts.AccountManager;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import common.money.Percentage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import rewards.internal.account.Account;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
@@ -28,13 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * These tests run the AccountController using the MockMVC framework.
  * The server does not need to be running.
  */
-@WebMvcTest(AccountController.class) // WebMvcTest = MockMvc, @MockBean
+@WebMvcTest(AccountController.class) // WebMvcTest = MockMvc, @MockitoBean
 public class AccountControllerBootTests {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private AccountManager accountManager;
 
     @Test

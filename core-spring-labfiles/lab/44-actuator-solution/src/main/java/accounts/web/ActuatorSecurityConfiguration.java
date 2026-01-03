@@ -3,8 +3,8 @@ package accounts.web;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.boot.actuate.autoconfigure.condition.ConditionsReportEndpoint;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.boot.health.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

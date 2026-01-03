@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //    * Usage of a relative path rather than an absolute path
 //    * Handling the 404 response from the service
 // - Using MockMvc for Web slice testing
-// - Understanding the difference between @MockBean and @Mock
+// - Understanding the difference between @MockitoBean and @Mock
 
 // TODO-01: Make this class a Spring Boot test class
 // - Add @SpringBootTest annotation with WebEnvironment.RANDOM_PORT

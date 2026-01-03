@@ -1,9 +1,11 @@
 package accounts.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import tools.jackson.databind.ObjectMapper;
 
 // TODO-06: Get yourself familiarized with various testing utility classes
 // - Uncomment the import statements below
@@ -20,7 +22,7 @@ public class AccountControllerBootTests {
 
 	// TODO-08: Autowire MockMvc bean
 
-	// TODO-09: Create AccountManager mock bean using @MockBean annotation
+	// TODO-09: Create AccountManager mock bean using @MockitoBean annotation
 
 	// TODO-10: Write positive test for GET request for an account
 	// - Uncomment the code and run the test and verify it succeeds
@@ -96,9 +98,9 @@ public class AccountControllerBootTests {
 		}
 	}
 
-	// TODO-13 (Optional): Experiment with @MockBean vs @Mock
-	// - Change `@MockBean` to `@Mock` for the `AccountManager dependency above
+	// TODO-13 (Optional): Experiment with @MockitoBean vs @Mock
+	// - Change `@MockitoBean` to `@Mock` for the `AccountManager dependency above
 	// - Run the test and observe a test failure
-	// - Change it back to `@MockBean`
+	// - Change it back to `@MockitoBean`
 
 }

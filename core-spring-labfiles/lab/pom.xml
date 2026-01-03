@@ -11,14 +11,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>4.0.1</version>
     </parent>
     <properties>
         <!-- Versions of other dependencies not in spring IO. -->
-        <easymock.version>4.3</easymock.version>
-        <hibernate.jmx.version>3.5.6-Final</hibernate.jmx.version>
+        <easymock.version>5.6.0</easymock.version>
+        <hibernate.core.version>7.2.0.Final</hibernate.core.version>
         <jamon.version>2.82</jamon.version>
-        <spring-security.version>5.8.0</spring-security.version>
+        <spring-security.version>7.0.2</spring-security.version>
 
         <java.version>21</java.version>
 
@@ -26,10 +26,10 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- Add JAXB that is dropped in JDK 9 -->
-        <jaxb-api.version>2.3.0</jaxb-api.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
 
         <!-- Without this, Eclipse will flag an error on pom.xml -->
-        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     </properties>
     <dependencies>
         <!--
@@ -78,9 +78,9 @@
             </dependency>
             <!-- Other -->
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-jmx</artifactId>
-                <version>${hibernate.jmx.version}</version>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
@@ -127,7 +127,7 @@
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>true</downloadJavadocs>
-                    <wtpversion>2.0</wtpversion>
+                    <wtpversion>6.1.8</wtpversion>
                     <sourceIncludes>
                         <sourceInclude>**/*.*</sourceInclude>
                     </sourceIncludes>

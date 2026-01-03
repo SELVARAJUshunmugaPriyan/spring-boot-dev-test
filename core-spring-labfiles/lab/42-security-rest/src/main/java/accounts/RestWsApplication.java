@@ -2,7 +2,7 @@ package accounts;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 
 // TODO-00: In this lab, you are going to exercise the following:
 // - Observing the default security behavior

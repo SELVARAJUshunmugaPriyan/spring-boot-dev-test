@@ -66,13 +66,13 @@ public class RewardNetworkPropagationTests {
 		Dining dining = Dining.createDining("100.00", "1234123412341234", "1234567890");
 		rewardNetwork.rewardAccountFor(dining);
 
-		// Rollback the transaction started by this test
-		transactionManager.rollback(status);
-
 		// Assert that a Reward has been saved to the database - for this to be true
 		// the RewardNetwork must run and commit its OWN transaction
 		String sql = "select SAVINGS from T_ACCOUNT_BENEFICIARY where NAME = ?";
 		assertEquals(Double.valueOf(4.00), template.queryForObject(sql, Double.class, "Annabelle"));
 		assertEquals(Double.valueOf(4.00), template.queryForObject(sql, Double.class, "Corgan"));
+
+		// Rollback the transaction started by this test
+		transactionManager.rollback(status);
 	}
 }
