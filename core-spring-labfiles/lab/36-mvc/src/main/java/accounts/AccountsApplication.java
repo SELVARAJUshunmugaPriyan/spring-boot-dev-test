@@ -37,7 +37,7 @@ public class AccountsApplication {
 }
 
 /**
- * TODO-12: Make this server listen on port 8088.
+ * TO-DO-12: Make this server listen on port 8088.
  * - Go to "application.properties" and set the appropriate property
  * - Once the application restarts, access http://localhost:8088
  */

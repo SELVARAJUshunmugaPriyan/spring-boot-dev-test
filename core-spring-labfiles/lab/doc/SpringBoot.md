@@ -581,3 +581,11 @@ SpringBoot developer tools enables non-production auto-restart providing faster 
 ======================
 
     server.servlet.session.timeout=5m <- 5 minutes
+
+======================
+#                    #
+#  RESTful Applica-  #
+#  tion with Spring  #
+#  Boot              #
+#                    #
+======================
