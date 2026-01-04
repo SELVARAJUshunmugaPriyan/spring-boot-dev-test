@@ -1,8 +1,16 @@
 package rewards.internal;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.orm.ObjectRetrievalFailureException;
 
 import rewards.Dining;
@@ -32,7 +40,14 @@ public class StubRestaurantRepository implements RestaurantRepository {
 		restaurantsByMerchantNumber.put(restaurant.getNumber(), restaurant);
 	}
 
+	/**
+	 * @deprecated Use {@link #findByNumber(String)} instead
+	 */
 	public Restaurant findByMerchantNumber(String merchantNumber) {
+		return findByNumber(merchantNumber);
+	}
+
+	public Restaurant findByNumber(String merchantNumber) {
 		Restaurant restaurant = (Restaurant) restaurantsByMerchantNumber.get(merchantNumber);
 		if (restaurant == null) {
 			throw new ObjectRetrievalFailureException(Restaurant.class, merchantNumber);
@@ -49,5 +64,185 @@ public class StubRestaurantRepository implements RestaurantRepository {
 		public boolean isBenefitAvailableFor(Account account, Dining dining) {
 			return true;
 		}
+	}
+
+	@Override
+	public void flush() {
+		
+		
+	}
+
+	@Override
+	public <S extends Restaurant> S saveAndFlush(S entity) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> List<S> saveAllAndFlush(Iterable<S> entities) {
+		
+		return null;
+	}
+
+	@Override
+	public void deleteAllInBatch(Iterable<Restaurant> entities) {
+		
+		
+	}
+
+	@Override
+	public void deleteAllByIdInBatch(Iterable<Long> ids) {
+		
+		
+	}
+
+	@Override
+	public void deleteAllInBatch() {
+		
+		
+	}
+
+	@Override
+	public Restaurant getOne(Long id) {
+		
+		return null;
+	}
+
+	@Override
+	public Restaurant getById(Long id) {
+		
+		return null;
+	}
+
+	@Override
+	public Restaurant getReferenceById(Long id) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> List<S> findAll(Example<S> example) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> List<S> findAll(Example<S> example, Sort sort) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> List<S> saveAll(Iterable<S> entities) {
+		
+		return null;
+	}
+
+	@Override
+	public List<Restaurant> findAll() {
+		
+		return null;
+	}
+
+	@Override
+	public List<Restaurant> findAllById(Iterable<Long> ids) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> S save(S entity) {
+		
+		return null;
+	}
+
+	@Override
+	public Optional<Restaurant> findById(Long id) {
+		
+		return Optional.empty();
+	}
+
+	@Override
+	public boolean existsById(Long id) {
+		
+		return false;
+	}
+
+	@Override
+	public long count() {
+		
+		return 0;
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		
+		
+	}
+
+	@Override
+	public void delete(Restaurant entity) {
+		
+		
+	}
+
+	@Override
+	public void deleteAllById(Iterable<? extends Long> ids) {
+		
+		
+	}
+
+	@Override
+	public void deleteAll(Iterable<? extends Restaurant> entities) {
+		
+		
+	}
+
+	@Override
+	public void deleteAll() {
+		
+		
+	}
+
+	@Override
+	public List<Restaurant> findAll(Sort sort) {
+		
+		return null;
+	}
+
+	@Override
+	public Page<Restaurant> findAll(Pageable pageable) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> Optional<S> findOne(Example<S> example) {
+		
+		return Optional.empty();
+	}
+
+	@Override
+	public <S extends Restaurant> Page<S> findAll(Example<S> example, Pageable pageable) {
+		
+		return null;
+	}
+
+	@Override
+	public <S extends Restaurant> long count(Example<S> example) {
+		
+		return 0;
+	}
+
+	@Override
+	public <S extends Restaurant> boolean exists(Example<S> example) {
+		
+		return false;
+	}
+
+	@Override
+	public <S extends Restaurant, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+		
+		return null;
 	}
 }
