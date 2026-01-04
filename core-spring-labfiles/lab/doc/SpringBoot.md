@@ -291,3 +291,135 @@ The CommandLineRunner is a functional interface in Spring Boot used to execute s
         }
 
     }
+======================
+#                    #
+#  Spring Boot - S-  #
+#  pring Data JPA    #
+#                    #
+======================
+Only spring-boot-starter-data-jpa artifact is needed to create spring JPA application. It resolves -
+> spring-boot-starter
+> spring-boot-starter-jdbc
+> spring-boot-starter-aop
+> spring-data-jpa
+> hibernate-core (JPA implementation)
+> javax.transaction-api
+JPA requires DataSource, EntityManagerFactoryBean and JpaTransactionManager. JPA deals with entities which is a persistent object managed by entity manager. Manager has capabilities for second-level cache.
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+        adapter.setShowSql(true);
+        adapter.setGenerateDdl(true);
+        adapter.setDatabase(Database.HSQL);
+        Properties props = new Properties();
+        props.setProperty("hibernate.format_sql", "true");
+        LocalContainerEntityManagerFactoryBean emfb = 
+                new LocalContainerEntityManagerFactoryBean();
+        emfb.setDataSource(dataSource);
+        emfb.setPackagesToScan("rewards.internal");
+        emfb.setJpaProperties(props);
+        emfb.setJpaVendorAdapter(adapter);
+        return emfb;
+    }
+
+@EnableAutoConfiguration includes @EntityScan
+
+    Application.properties :-
+    # Leave blank - Spring Boot will try to select dialect for you
+    # Set to 'default' - Hibernate will try to determine it
+    spring.jpa.database=default
+
+    # Create tables automatically? Default is:
+    #   Embedded database: create-drop
+    #   Any other database: none (do nothing)
+    # Options: validate | update | create | create-drop
+    spring.jpa.hibernate.ddl-auto=update
+
+    # Show SQL being run (nicely formatted)
+    spring.jpa.show-sql=true
+    spring.jpa.properties.hibernate.format_sql=true
+
+    # Any hibernate property 'xxx'
+    spring.jpa.properties.hibernate.xxx=???
+
+Spring boot auto-configures jpa via -
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        return entityManagerFactoryBean;
+    }
+
+    @Bean
+    public PlatformTransactionManager
+            transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+
+    @Bean
+    public DataSource dataSource() { /* Lookup via JNDI or create locally */ }
+======================
+#                    #
+#  Create Spring D-  #
+#  ata Repositories  #
+#  for JPA           #
+#                    #
+======================
+[CORE_PROJECT] :  Spring Data
+[SUB_PROJECTS] :  JPA / Pivotal Gemfire / MongoDB 
+                  Apache Hadoop / Solr / JDBC ext
+                  Neo4j / Redis / many more ...
+Spring Data depends on data domains like entities through @Table, @Entity and other annotations, and repositories.
+Spring Data implements repositories interfaces at run-time by
+-   Scanning for marker interfaces extending Spring Data Common Repository<T, K>
+-   Auto-generating CRUD methods when using CrudRepository<T, K>
+-   Paging, custom queries and sorting supported
+-   Variations exist for most Spring Data sub-projects
+
+    SQL Domain class:
+
+    @Entity
+    @Table("TABLE")
+    public class Domain {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType)
+        private Long pk;
+        private String columns;
+
+    }
+
+    MongoDB Domain class:
+    @Document
+    public class Domain {}
+
+    Neo4J Domain class:
+    @NodeEntity
+    public class Domain { @GraphId Long id; }
+
+    Gemfire Domain class:
+    @Region
+    public class Domain {}
+
+    Base repository:
+    public interface Repository<T, ID> { }
+
+    Crud repository:
+    public interface CrudRepository<T, ID extends Serializable> 
+        extends Repository<T, ID> {
+        public long count();
+        public <S extends T> S save(S entity);
+        public <S extends T> Iterable<S> save(Iterable<S> entities);
+        public Optional<T> findById(ID id);
+        public Iterable<T> findAll();
+        public Iterable<T> findAllById(Iterable<ID> ids);
+        public void deleteAll(Iterable<? extends T> entities);
+        public void delete(T entity);
+        public void deleteById(ID id);
+        public void deleteAll();
+    }
+
+    Custom repository:
+    public interface CustomRepository extends CrudRepository<T, ID> { }
+
+@EnableJpaRepositories(basePackages="com.example") to dictate packages to be scanned for jpa.
