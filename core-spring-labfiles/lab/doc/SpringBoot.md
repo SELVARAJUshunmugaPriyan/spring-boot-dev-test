@@ -423,3 +423,161 @@ Spring Data implements repositories interfaces at run-time by
     public interface CustomRepository extends CrudRepository<T, ID> { }
 
 @EnableJpaRepositories(basePackages="com.example") to dictate packages to be scanned for jpa.
+======================
+#                    #
+#  Spring Web Intr-  #
+#  oduction          #
+#                    #
+======================
+Features of Spring MVC :-
+> Model/View/Controller (MVC) design pattern
+> POJO programming removes f/w dependencies 
+> Testable components with minimal dependency on f/w
+> Spring f/w for configuration, dependency injection and auto-configuration
+> Supports Client-Side Rendering (CSR) (REST) and Server-Side Rendering(SSR) (templates)
+
+Types of Spring MVC Applications :-
+Web Servlet (Traditional)       Web Reactive (Modern)
+-------------------------       ---------------------
++Traditional approach.	        +Newer, more efficient.
++Based on Java EE Servle-       +Non-blocking approach.
+t Specification.	
++Includes Servlets, Filt-       +Uses Netty, Undertow,
+ers, Listeners, etc..	        or Servlet 3.1+.
+                                +Requires knowledge of 
+                                Reactive programming.
++Spring Web                     +Spring Webflux starter
+
+Spring boot supports embedded 'fat' JAR as well as traditional WAR packaging in external container or application server.
+
+{LOCALE_RESOLVER] [HANDLER_MAPPING]         {EXCEPTION_RESOLVER]
+                  1.^|
+                    |v         2.
+--request(URL)-->[DISPATCHER]--dispatch-->[HANDLER] {CONTROLLER]
+<-response--------[SERVLET]<---domain object----[ADAPTER]
+                  /3.|^ ^\-----3.data---->[MESSAGE] {CONTENT_TYPE_MANAGER]
+                 /   v|  \----------------[CONVERTER]
+              Model [VIEW_RESOLVER]
+              /
+             v
+            [VIEW]
+View resolver and views are part of SSR. Message convertor returns java objects used by CSR.
+======================
+#                    #
+#  Create a simple   #
+#  RESTful control-  #
+#  ler to handle G-  #
+#  ET requests       #
+#                    #
+======================
+
+--request(URL)-->[DISPATCHER]--dispatch--------------->[HANDLER] {CONTROLLER]
+<-response--------[SERVLET]<---domain object (data)----[ADAPTER]
+                    ^\-----covert (data)----->[MESSAGE] {CONTENT_TYPE_MANAGER]
+                    \------XML, JSON----------[CONVERTER]
+
+Message converters: Jackson for JSON/XML, JAXB for XML and GSON for JSON
+Controller is a POJO class annotated with @Component picked by @ComponentScan
+
+    Sample :
+    ========
+
+    @Controller
+    public class AccountController {
+        @GetMapping("/accounts/{accountId}")
+        public @ResponseBody List<Account> list(Principal user, @RequestParam(required=false, name="userId") Integer userId,
+            @PathVariable("accountId") Long id, @RequestHeader("user-agent") String agent) {}
+    }
+
+    @Controller -> MVC
+    @GetMapping -> Handler Adapter
+    @ResponseBody -> REST response and disables view handling
+    @RequestParam -> Request parameters
+    @PathVariable -> dynamic URI part extraction based on URI templates
+    @RequestHeader -> HTTP header
+
+    @RestController
+    public class AccountController {
+        @GetMapping("/accounts")
+        public List<Account> list(Principal user) {}
+    }
+
+    @RestController -> @Controller + @ResponseBody
+
+Spring injects handler method arguments. It could be -
+> HttpServletRequest
+> HttpSession
+> Principal
+> Locale
+======================
+#                    #
+#  Message Convert-  #
+#  ers               #
+#                    #
+======================
+
+    HTTP request:
+    ------------
+
+    GET /store/orders/123
+    Host: shop.spring.io
+    Accept: application/json, ...   # format accepted by client 
+    ...
+
+
+    HTTP response:
+    -------------
+
+    HTTP/1.1 200 OK
+    Date: ..
+    Content-Length: 756
+    Content-Type: application/json  # format sent by the server
+
+    {
+        "id": 123,
+        "total": 200.00,
+        "items": [ ... ]
+    }
+
+HttpMessageConverter converts HTTP request/response body, which is automatically configured by Spring using @ResponseBody annotation.
+ResponseEntity supports more control over HttpServletResponse through header settings. It supportes 'fluent' api, which is a object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility by creating a domain-specific language (DSL). ResponseEntity subclasses HttpEntity with fluent API.
+
+    ResponseEntity<String> response = ResponseEntity.ok()
+                                                    .lastModified(order.lastUpdated())
+                                                    .contentType(MediaType.TEXT_PLAIN)
+                                                    .body("Hello Spring");
+======================
+#                    #
+#  Configure for W-  #
+#  AR or JAR deplo-  #
+#  yment             #
+#                    #
+======================
+SpringBoot auto-configures -
+- DispatcherServlet/Web Container/Servlet Container
+- Internal configuration to support controllers
+- Default resource locations (images, css, JavaScript)
+- Default message converters
+
+For WAR packaging,
+
+    @SpringBootApplication
+    public class Application extends SpringBootServletInitializer {
+        protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+            return application.sources(Application.class);
+        }
+        public static void main(String[] args) {
+            SpringApplication.run(Application.class, args);
+        }
+    }
+
+Embedded Tomcat JARs can cause conflicts when running WAR inside traditional web container which can be avoided by marking Tomcat dependencies as provided.
+SpringBoot developer tools enables non-production auto-restart providing faster restart than cold-restart.
+======================
+#                    #
+#  Spring MVC Quick  #
+#  Start             #
+#                    #
+======================
+
+    server.servlet.session.timeout=5m <- 5 minutes
