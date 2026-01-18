@@ -3,6 +3,9 @@ package accounts.web;
 import accounts.AccountManager;
 import accounts.services.AccountService;
 import common.money.Percentage;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.net.URI;
 import java.util.HashMap;

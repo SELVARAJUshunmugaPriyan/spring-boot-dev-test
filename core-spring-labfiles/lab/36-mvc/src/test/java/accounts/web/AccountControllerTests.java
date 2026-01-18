@@ -1,10 +1,11 @@
 package accounts.web;
 
 import accounts.internal.StubAccountManager;
+import rewards.internal.account.Account;
+
 import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import rewards.internal.account.Account;
 
 import java.util.List;
 

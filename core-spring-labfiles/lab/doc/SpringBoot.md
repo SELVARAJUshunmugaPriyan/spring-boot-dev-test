@@ -589,3 +589,186 @@ SpringBoot developer tools enables non-production auto-restart providing faster 
 #  Boot              #
 #                    #
 ======================
+
+REST is an architecture which describes best practices to expose web services over HTTP. As an application protocol, HTTP emphasizes both scalability and transportation. REST - REpresentational State Transfer. REST relies on HTTP for simplicity, ubiquity and interoperability. Uses of REST - Mobile Apps, Microservices, SPA and AJAX in web browser.
+SPAs (Single-Page Applications) and AJAX (Asynchronous JavaScript and XML) work together in browsers: a SPA loads one main HTML page and uses AJAX (like the fetch API or XMLHttpRequest) for background requests to fetch data (JSON/XML) and update parts of the page dynamically without full reloads, creating a fluid experience.
+REST principle -
+    limited HTTP methods + accessible resource URIs -> Uniform interface
+
+HATEOAS (Hypermedia as the Engine of Application State) is a core constraint of REST architectural style where responses from a server include hypermedia links (like URLs) that guide the client on what actions they can take next, making the API self-discoverable and decoupling client and server. Instead of clients needing hardcoded knowledge of endpoints, they follow these dynamic links, similar to clicking links on a webpage, allowing APIs to evolve independently. HATEOAS sample response -
+
+    {
+        "orderId": 123,
+        "status": "Processing",
+        "_links": {
+            "self": { "href": "/orders/123" },
+            "customer": { "href": "/customers/456" },
+            "cancel": { "href": "/orders/123/cancel" }
+        }
+    }
+
+Principles of REST -
+> No HttpSession usage
+> GETs can be cached on URL
+> Recommends clients to keep track of the state
+> Scalability
+> Looser coupling between client and server
+
+SOAP (Simple Object Access Protocol) defines an XML-based messaging standard; HTTP is the common transport protocol used to send these messages; and WS-Security (Web Services Security) provides standard extensions for security like encryption and digital signatures. WS-Security components (signatures, encryption) are added to the SOAP Header.
+Jakarta EE is a set of specifications for building cloud native java applications. JAX-RS - Jakarta RESTful Web Services - is a Jakarta EE specification with implementations such as Jersey, RESTEasy and Apache CXF.
+======================
+#                    #
+#  Implementing HT-  #
+#  TP GET and PUT    #
+#                    #
+======================
+Requirements for using Spring MVC to support REST -
+> Map requests based on HTTP method (GET, POST, etc.)
+> Define response status (404, 204, 201, etc.)
+> Message Converters
+> Access request and response body data
+> Build valid Location URIs (as part of HTTP POST handling)
+@GetMapping is a “composed” annotation. @RequestMethod enumerates GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, TRACE.
+
+    @GetMapping("/store/orders") -or- @RequestMapping(path="/store/orders", method=RequestMethod.GET)
+
+HTTP GET method returns a java object which is automatically converted by message converter based on 'accept' request header. Message converters also converts incoming request body in HTTP PUT or POST methods to java object based on content type. To enable converters, @ResponseBody is used.
+
+    @GetMapping("/store/orders/{id})
+    public ResponseEntity<Order> getOrder(@PathVariable long id) {
+        Order order = orderService.find(id);
+
+        return ResponseEntity.ok()
+                             .lastModified(order.lastUpdated())
+                             .body(order);
+    }
+
+HTTP status codes :-
+> 200 OK
+> 201 CREATED
+> 30x REDIRECTS
+> 400 BAD REQUEST
+> 404 NOT FOUND
+> 405 HTTP METHOD NOT SUPPORTED
+> 406 NOT ACCEPTABLE
+> 415 UNSUPPORTED MEDIA TYPE
+> 500 INTERNAL SERVER ERROR
+
+@ResponseStatus method annotation is used to specify the status code of methods.
+
+    @PutMapping("/store/orders/{orderId}/items/{itemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateOrder(@PathVariable Integer orderId,
+                            @PathVariable Integer itemId,
+                            @RequestBody Item item)
+    {
+        orderService.findOrderById(orderId).updateItem(itemId, item);
+    }
+======================
+#                    #
+#  Implementing HT-  #
+#  TP POST and DEL-  #
+#  ETE               #
+#                    #
+======================
+HTTP POST requirements :-
+> Responds only to POST method
+> Access data in request
+> Return 201 CREATED status
+> Generate Location header for newly created resource
+
+    POST /store/orders/123/items                        HTTP/1.1 201 Created
+    Host: shop.io                                       Date: ...
+    Content-Type: application/json                      Content-Length: 0
+                                                ==>>    Location:
+    Body:                                                   http://shop.io/store/orders/123/items/abc
+    {
+        "cost": 50.00,
+        "product": SKU9988, ...
+    }
+
+Location header is provided by UriComponentBuilder which allows explicit creation of URI but requires hard-coded URLs, and ServletUriComponentsBuilder which is a subclass of UriComponentBuilder provides access to the URL that invoked the current controller method. 
+
+    @PostMapping("/store/orders/{orderId}/items")
+    public ResponseEntity<Void> createItem(@PathVariable Long orderId, @RequestBody Item item)
+    {
+        orderService.findOrderByItem(orderId).addItem(item);
+
+        URI location = ServletUriComponentsBuilder
+                            .fromCurrentRequestUri()
+                            .path("/{itemId}") // Adds to end of calling URI
+                            .buildAndExpand(itemId) // produces proper URI converting non-supported characters in itemId. 
+                                                    // e.g. whitespace is converted to %20
+                            .toUri();
+
+        return ResponseEntity.created(location) // places URI in location headers
+                             .build();
+    }
+
+HTTP DELETE requirements :-
+> Responds only to DELETE requests
+> Return empty response, status 204
+
+    DELETE /store/orders/123/items/abc                  HTTP/1.1 204 No Content
+    Host: shop.spring.io                   ==>>         Date: ...
+    Content-Length: 0                                   Content-Length: 0
+
+    @DeleteMapping("/store/orders/{orderId}/items/{itemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteItem(@PathVariable Integer orderId,
+                           @PathVariable Integer itemId)
+    {
+        orderService.findOrderById(orderId).deleteItem(itemId);
+    }
+======================
+#                    #
+#  Utilize RestTem-  #
+#  plate to invoke   #
+#  RESTful services  #
+#                    #
+======================
+HTTP Method	    RestTemplate Method
+-----------     -------------------
+DELETE	        delete(String url, Object... urlVariables)
+GET	            getForObject(String url, Class<T> responseType, Object... urlVariables)
+HEAD	        headForHeaders(String url, Object... urlVariables)
+OPTIONS	        optionsForAllow(String url, Object... urlVariables)
+POST	        postForLocation(String url, Object request, Object... urlVariables)
+	            postForObject(String url, Object request, Class<T> responseType, Object... urlVariables)
+PUT	            put(String url, Object request, Object... urlVariables)
+PATCH	        patchForObject(String url, Object request, Class<T> responseType, Object... urlVariables)
+
+    public class MyClientClass {
+        private RestTemplate template;                          -or-    RestTemplate template = new RestTemplate();
+
+        @Autowired
+        public MyClientClass(RestTemplateBuilder builder) {
+            this.template = builder.build();
+        }
+
+        final String uri = "http://shop.io/store/orders/{orderId}/items";
+
+        Item[] items     = template.getForObject(uri, Item[].class, "1");
+        Item item = new Item();
+        URI location     = template.postForLocation(uri, item, "1");
+        item.setAmount(2);
+                           template.put(location, item);
+                           template.delete(location);
+
+        ResponseEntity<Order> response =
+            template.getForEntity(uri, Order.class, "1");
+        assert(response.getStatusCode()).equals(HttpStatus.OK);
+        long modified = response.getHeaders().getLastModified();
+        Order order = response.getBody();
+
+        RequestEntity<Item> request    =
+            RequestEntity.post(new URI(itemUrl))
+                         .getHeaders().add(HttpHeaders.AUTHORIZATION, "Basic " + getBase64EncodedLoginData())
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .body(newItem);
+        ResponseEntity<Void> response  =
+            template.exchange(request, Void.class);     // exchange() is a generic method
+        assert(response.getStatusCode()).equals(HttpStatus.CREATED);
+    }
+
+RestTemplate won't be further developed and not deprecated. Modern use-cases such as streaming, needs reactive non-blocking API calls which is performed by WebClient. Instead of returning raw objects, WebClient returns Mono<T> (for a single object) or Flux<T> (for a list/stream of objects). These are "Publishers" that you subscribe to.

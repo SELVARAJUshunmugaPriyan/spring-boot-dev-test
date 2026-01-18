@@ -4,14 +4,15 @@ import accounts.AccountManager;
 import ch.qos.logback.classic.Level;
 import common.money.MonetaryAmount;
 import common.money.Percentage;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.util.HashMap;
 import java.util.List;

@@ -7,7 +7,6 @@ import org.springframework.orm.ObjectRetrievalFailureException;
 
 import rewards.Dining;
 import rewards.internal.account.Account;
-
 import common.money.Percentage;
 
 /**

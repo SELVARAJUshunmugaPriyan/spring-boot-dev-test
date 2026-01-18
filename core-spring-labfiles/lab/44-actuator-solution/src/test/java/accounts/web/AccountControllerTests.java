@@ -3,14 +3,15 @@ package accounts.web;
 import accounts.internal.StubAccountManager;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.util.List;
 

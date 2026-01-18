@@ -10,9 +10,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import rewards.internal.account.Account;
 
 import jakarta.persistence.EntityManagerFactory;
+import rewards.internal.account.Account;
+
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;

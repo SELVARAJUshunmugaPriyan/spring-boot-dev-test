@@ -2,14 +2,15 @@ package accounts.client;
 
 import accounts.RestWsApplication;
 import common.money.Percentage;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.net.URI;
 import java.util.Random;

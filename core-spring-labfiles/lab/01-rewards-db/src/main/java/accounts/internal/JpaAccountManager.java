@@ -7,12 +7,12 @@ import java.util.Map.Entry;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import rewards.internal.account.Account;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import common.money.Percentage;
-import rewards.internal.account.Account;
 
 /**
  * An account manager that uses JPA to find accounts.
@@ -104,6 +104,12 @@ public class JpaAccountManager extends AbstractAccountManager {
 
 		if (allocationPercentages != null)
 			updateBeneficiaryAllocationPercentages(accountId, allocationPercentages);
+	}
+	
+	@Override
+	@Transactional
+	public void removeAccount(Long accountId) {
+		entityManager.remove(getAccount(accountId));
 	}
 
 }

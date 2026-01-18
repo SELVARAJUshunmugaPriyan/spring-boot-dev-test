@@ -7,10 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
+import common.money.Percentage;
 import rewards.internal.account.Account;
 import rewards.internal.account.Beneficiary;
-
-import common.money.Percentage;
 
 /**
  * IMPORTANT: Per best practices, this class shouldn't be in 'src/main/java'
@@ -100,6 +99,11 @@ public class StubAccountManager extends AbstractAccountManager {
 			Map<String, Percentage> allocationPercentages) {
 		accountsById.get(accountId).removeBeneficiary(beneficiaryName);
 		updateBeneficiaryAllocationPercentages(accountId, allocationPercentages);
+	}
+
+	@Override
+	public void removeAccount(Long accountId) {
+		accountsById.remove(accountId);
 	}
 
 }

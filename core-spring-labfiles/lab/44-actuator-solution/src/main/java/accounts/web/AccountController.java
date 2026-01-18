@@ -5,6 +5,9 @@ import common.money.Percentage;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.net.URI;
 import java.util.HashMap;

@@ -12,7 +12,6 @@ import jakarta.persistence.Transient;
 
 import rewards.Dining;
 import rewards.internal.account.Account;
-
 import common.money.MonetaryAmount;
 import common.money.Percentage;
 

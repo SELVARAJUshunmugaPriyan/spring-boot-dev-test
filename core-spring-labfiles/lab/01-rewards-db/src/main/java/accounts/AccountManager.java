@@ -3,9 +3,8 @@ package accounts;
 import java.util.List;
 import java.util.Map;
 
-import rewards.internal.account.Account;
-
 import common.money.Percentage;
+import rewards.internal.account.Account;
 
 /**
  * Manages access to account information. Used as the service layer component in
@@ -91,4 +90,12 @@ public interface AccountManager {
 	 */
 	public void removeBeneficiary(Long accountId, String beneficiaryName,
 			Map<String, Percentage> allocationPercentages);
+	
+	/**
+	 * Removes an account.
+	 * 
+	 * @param accountId
+	 *            the account id
+	 */
+	public void removeAccount(Long accountId);
 }

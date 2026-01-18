@@ -2,6 +2,9 @@ package accounts.client;
 
 import accounts.RestWsApplication;
 import common.money.Percentage;
+import rewards.internal.account.Account;
+import rewards.internal.account.Beneficiary;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import rewards.internal.account.Account;
-import rewards.internal.account.Beneficiary;
 
 import java.net.URI;
 import java.util.Random;

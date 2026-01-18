@@ -6,6 +6,8 @@ import accounts.services.AccountService;
 import tools.jackson.databind.ObjectMapper;
 import common.money.Percentage;
 import config.RestSecurityConfig;
+import rewards.internal.account.Account;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import rewards.internal.account.Account;
 
 import java.util.Arrays;
 import java.util.List;
