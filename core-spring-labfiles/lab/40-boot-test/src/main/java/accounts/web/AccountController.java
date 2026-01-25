@@ -7,7 +7,6 @@ import rewards.internal.account.Beneficiary;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,6 @@ public class AccountController {
 	/**
 	 * Creates a new AccountController with a given account manager.
 	 */
-	@Autowired
 	public AccountController(AccountManager accountManager) {
 		this.accountManager = accountManager;
 	}

@@ -772,3 +772,189 @@ PATCH	        patchForObject(String url, Object request, Class<T> responseType, 
     }
 
 RestTemplate won't be further developed and not deprecated. Modern use-cases such as streaming, needs reactive non-blocking API calls which is performed by WebClient. Instead of returning raw objects, WebClient returns Mono<T> (for a single object) or Flux<T> (for a list/stream of objects). These are "Publishers" that you subscribe to.
+======================
+#                    #
+#  Spring Boot Tes-  #
+#  ting              #
+#                    #
+======================
+SpringBoot testing f/w is built on top of Spring testing f/w.
+
+Integration testing > @SpringBootTest
+Slice testing       > Web-layer
+                      ---------
+                      @WebMvcTest, @WebFluxTest
+
+                      Data-layer
+                      ----------
+                      @DataJpaTest, @DataJdbcTest, @JdbcTest, @DataMongoTest, @DataRedisTest
+
+                      Specific-component
+                      ------------------
+                      @MockBean
+
+Testing Dependencies with spring-boot-starter-test
+
+    JUnit: JUnit 5 is default version (from Spring Boot 2.2)
+    Spring Test & Spring Boot Test: Testing annotations
+    AssertJ: A fluent assertion library
+    Hamcrest: A library of matcher
+    Mockito: A Java mocking framework
+    JSONassert: An assertion library for JSON
+    JsonPath: XPath for JSON
+
+Integration Testing with @SpringBootTest
+
+    Automatically searches for @SpringBootConfiguration
+        An alternative to @ContextConfiguration for creating application context for testing
+        Use @SpringBootTest for integration testing and use @ContextConfiguration for slice testing
+
+    Provides support for different webEnvironment modes
+        RANDOM_PORT, DEFINED_PORT, MOCK, NONE
+
+    The embedded server gets started by the testing framework
+        When RANDOM_PORT, DEFINED_PORT are used
+        Integration testing can be done as part of CI/CD pipeline
+
+    Auto-configures a TestRestTemplate
+
+Integration Testing with TestRestTemplate
+
+    Convenient alternative of RestTemplate suitable for integration tests
+        Takes a relative path (instead of an absolute path)
+        Fault tolerant: it does not throw an exception when an error response such as 404 is received from the server application
+        Configured to ignore cookies and redirects
+
+    If you need customizations
+        Use RestTemplateBuilder
+        Examples: add custom message converters, setting connection or read timeouts
+
+    @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+    public class AccountClientBootTests {
+        @Autowired
+        private TestRestTemplate restTemplate;
+
+        @Test
+        public void addAndDeleteBeneficiary() {
+
+            String addUrl = "/accounts/{accountId}/beneficiaries";
+            URI newBeneficiaryLocation = restTemplate.postForLocation(addUrl, "David", 1);
+            Beneficiary newBeneficiary = restTemplate.getForObject(newBeneficiaryLocation, Beneficiary.class);
+            assertThat(newBeneficiary.getName()).isEqualTo("David");
+
+            restTemplate.delete(newBeneficiaryLocation);
+
+            ResponseEntity<Beneficiary> response =
+                    restTemplate.getForEntity(newBeneficiaryLocation, Beneficiary.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        }
+    }
+======================
+#                    #
+#  Perform MockMVC   #
+#  testing           #
+#                    #
+======================
+
+    import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+    import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+    @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
+    @AutoConfigureMockMvc
+    public final class AccountControllerTests {
+
+        @Autowired
+        MockMvc mockMvc;
+
+        @Test
+        public void testBasicGet() {
+            mockMvc.perform(put("/accounts/{accountId}", "12345678") <-- MockHttpServletRequestBuilder (get, put, post or delete)
+                            .accept("application/json")
+                            .content("{ ... }")
+                            .contentType("application/json")
+                    )
+                   .andExpect(status().isOk());
+        }
+    }
+
+Method	        Description
+param	        Add a request parameter – such as param("myParam", 123)
+requestAttr	    Add an object as a request attribute. Also, sessionAttr does the same for session scoped objects
+header	        Add a header variable to the request. Also see headers, which adds multiple headers
+content	        Request body
+contentType	    Set content type (Mime type) for body of the request
+accept	        Set the requested type (Mime type) for the expected response
+locale	        Set the local for making requests
+
+perform() returns ResultActions object which can be chained (fluid syntax) with andExpect() with static argumnets like content() and jsonPath() from MockMvcResultMatchers. These arguments methods provides specific assertions using Hamcrest.
+
+Method	    Matcher Returned	    Description
+content	    ContentResultMatchers	Assertions relating to the HTTP response body
+header	    HeaderResultMatchers	Assertions on the HTTP headers
+status	    StatusResultMatchers	Assertions on the HTTP status
+xpath		                        Search returned XML using Xpath expression
+jsonPath		                    Search returned JSON using JsonPath
+
+Other fluid methods that can be chained with perform() are print(), andDo() and andReturn().
+======================
+#                    #
+#  Perform Slice T-  #
+#  esting            #
+#                    #
+======================
+Slice testing refers to isolated testing within a slice of the application
+- Web slice
+- Repository slice
+- caching slice
+and dependencies need to be mocked.
+
+@Mock
+    From Mockito framework
+    Use it when Spring context is not needed
+
+@MockBean
+    From Spring Boot Framework
+    Use it when Spring context is needed
+    Creates a new mock bean when it is not present in the Spring context or replaces a bean with a mock bean when it is present
+
+    @WebMvcTest(AccountController.class) // WebMvcTest = MockMvc, @MockitoBean
+    public class AccountControllerBootTests {
+        @Autowired
+        private MockMvc mockMvc;
+        @MockitoBean
+        private AccountManager accountManager;
+        @Test
+        public void accountDetails() throws Exception {
+
+            // arrange
+            given(accountManager.getAccount(anyLong()))
+                    .willReturn(new Account("1234567890", "John Doe"));
+
+            // act and assert
+            mockMvc.perform(get("/accounts/0"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("name").value("John Doe"))
+                .andExpect(jsonPath("number").value("1234567890"));
+
+            // verify
+            verify(accountManager).getAccount(anyLong());
+        }
+    }
+
+Repository Slice Testing with @DataJpaTest
+
+    Can be used when a test focuses only on JPA components
+        Loads @Repository beans, excludes all other @Components
+
+    Auto-configures TestEntityManager
+        Alternative to EntityManager for use in JPA tests
+        Provides a subset of EntityManager methods
+            Just those useful for tests
+            Helper methods for common testing tasks such as persistFlushFind(), persistAndFlush()
+
+    Uses an embedded in-memory database
+        Replaces any explicit or auto-configured DataSource
+        The @AutoConfigureTestDatabase annotation can be used to override these settings
