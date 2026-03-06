@@ -1297,3 +1297,252 @@ transfer("$50", 1, 2)     ======================                |
             //
         }
     }
+======================
+#                    #
+#  Actuators, Metr-  #
+#  ics and Health    #
+#  Indicators        #
+#                    #
+======================
+Actuator lib adds monitoring features available via JMX (Java Management Extensions (JMX) is a standard Java technology (JSR 3, JSR 160) for monitoring and managing applications, system objects, and the Java Virtual Machine (JVM). It uses Managed Beans (MBeans) to expose data, allowing developers to change configurations, monitor performance, and receive alerts) or HTTP endpoints -
+- /actuator/info    : general information, build data, custom data or information about latest commit
+          (example) : {
+                            "build": {
+                                "version": "5.3.23",
+                                "artifact": "37-actuator",
+                                "name": "37-actuator",
+                                "group": "io.spring.training.core-spring",
+                                "time": "2022-03-25T22:06:18.311Z"
+                            }
+                      }
+- /actuator/health  : application health status - composite information (minimal default output)
+                    : {
+                            "status": "UP"
+                      }
+- /actuator/metrics : Not exposed by default. List of generic and custom metrics measured by the application
+                    : {
+                            "names": {
+                                "jvm.memory.max",
+                                "jvm.gc.memory.promoted",
+                                "http.server.requests",
+                                "system.cpu.usage",
+                                "hikaricp.connections.active",
+                                "process.start.time",
+                                "reward.summary"
+                                ...
+                            }
+                      }
+
+Example: /actuator/metrics/http.server.requests
+
+{
+  "name": "http.server.requests",
+  "measurements": [
+    { "statistic": "COUNT", "value": 13 },
+    { "statistic": "MAX", "value": 0.003785154 },
+    ...
+  ],
+  "availableTags": [{
+    "tag": "method",
+    "values": [ "POST", "GET" ],
+    ...
+  }]
+}
+======================
+#                    #
+#  Setting up Actu-  #
+#  ators             #
+#                    #
+======================
+
+Dependency:
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-actuator</artifactId>
+                    </dependency>
+                </dependencies>
+
+Endpoint	Description
+beans	    Spring Beans created by application
+conditions	Conditions used by Auto-Configuration
+env	        Properties in the Spring Environment
+health	    Current state of the application
+configprops	Collated list of all @ConfigurationProperties
+info	    Arbitrary application information
+loggers	    Query and modify logging levels
+mappings	Spring MVC request mappings
+metrics	    List of available metrics
+session	    Fetch or delete user sessions (only if using Spring Session)
+shutdown	Shutdown the application (gracefully), disabled by default
+threaddump	Performs a thread dump
+jolokia	    Exposes JMX beans over HTTP (not just actuators)
+
+All endpoints are enabled (created in application context) by default except shutdown and only health endpoint is exposed by default over HTTP (available via Spring MVC, Jersey or WebFlux) but all endpoints are exposed by default via JMX (available via spring.jmx.enabled=true).
+
+# Change actuator base path
+management:
+    endpoints:
+        web:
+            base-path: /admin (default: /actuator)
+        exposure:
+            include: health / beans, env, info / * (all)
+
+# Security Filter Chain
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests((authz) -> authz
+        .requestMatchers("/actuator/health").permitAll()
+        .requestMatchers("/actuator/**").hasRole("ACTUATOR")
+        .anyRequest().authenticated());
+    return http.build();
+}
+
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests((authz) -> authz
+        .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+        .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ACTUATOR")
+        .anyRequest().authenticated());
+    return http.build();
+}
+======================
+#                    #
+#  Metrics           #
+#                    #
+======================
+SpringBoot uses little-overhead multi-dimensional Micrometer library without vendor lock-in. Custom metrics can be counter, gauge, timer or distribution-summary. They have registered with MeterRegistery and listed under /metrics/{custom-metric-name}
+
+    Example:
+    - Hierarchial
+                Http.method.get.status.200
+                Http.method.get.status.*
+    - Dimensional
+                Http?tag=method:get&tag=status:200
+
+    @Controller
+    public class OrderController {
+        private Timer timer;
+        private final DistributionSummary summary;
+
+        public class OrderController(MeterRegistry registry) {
+            this.timer = registry.timer("orders.submit");
+            this.summary = DistributionSummary.builder("orders.summary")
+                                              .baseUnit("dollars")
+                                              .register(registry);
+        }
+
+        @PostMapping("/orders")
+        public Order placeOrder(Order order) {
+            summary.record(order.getAmount());
+            return timer.record( () -> {} );
+        }
+
+        @GetMapping("/orders")
+        @Timed("orders.fetch")
+        public List<Order> orderSummary() {}
+    }
+
+    /actuator/metrics/order.summary
+
+    {
+        "name": "order.summary",
+        "measurements": [
+            {
+                "statistics": "COUNT",
+                "value": 3
+            },
+            {
+                "statistics": "TOTAL",
+                "value": 13
+            }
+        ]
+    }
+======================
+#                    #
+#  Health Indicato-  #
+#  rs                #
+#                    #
+======================
+
+# Set Spring Boot property
+management:
+    endpoint:
+        health:
+            # show-details: always
+            group:
+                system:
+                    include: diskSpace, db
+                    show-details: always
+                web:
+                    include: ping
+            status:
+                order: FATAL, DOWN, OUT_OF_SERVICE, UNKNOWN, UP
+    
+
+/actuator/health/system
+
+{
+  "status": "UP",
+  "details": {
+    "db": {
+      "status": "UP",
+      "details": {
+        "database": "MySQL"
+      }
+    },
+    "diskSpace": {
+      "status": "UP",
+      "details": {
+        "total": 499963170816,
+        ...
+      }
+    }
+  }
+}
+
+Example:
+            @Component
+            public class MyCustomHealthCheck implements HealthIndicator {
+                @Override
+                public Health health() {
+                    if (!customHealthValidationCheck())
+                        return Health.down().withDetail("metricName", 0).build();
+                    else
+                        return Health.up().build();
+                }
+            }
+
+            {
+                "status": "DOWN", <--
+                "details": {
+                    "myCustomHealthCheck": {
+                        "status": "DOWN", <--
+                        "details": {
+                            "metricName": 0
+                        }
+                    }
+                    "db": {
+                        "status": "UP"
+                    },
+                    "diskSpace": {
+                        "status": "UP
+                    }
+                }
+            }
+
+# External visualization/integration tools:
+
+Atlas (Netflix)
+CloudWatch
+Datadog
+Dynatrace
+Ganglia
+Graphite
+InfluxDB
+JMX
+New Relic
+Prometheus
+SignalFx
+StatsD
+Wavefront (VMware)
