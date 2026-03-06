@@ -3,8 +3,11 @@ package accounts;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.context.annotation.Import;
 
-// TODO-00: In this lab, you are going to exercise the following:
+import config.RestSecurityConfig;
+
+// TO-DO-00: In this lab, you are going to exercise the following:
 // - Observing the default security behavior
 // - Configuring authorization based on roles
 // - Configuring authentication using in-memory storage
@@ -13,10 +16,10 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 // - Adding custom AuthenticationProvider
 // - Writing test code for security
 
-// TODO-01: Verify the presence of Spring security dependencies
+// TO-DO-01: Verify the presence of Spring security dependencies
 // - See TO-DO-01 in the pom.xml for Maven or build.gradle for Gradle
 
-// TODO-02a: Observe the default security behaviour of the Spring
+// TO-DO-02a: Observe the default security behaviour of the Spring
 //           Boot application using a browser
 // - Run this application
 // - Using a browser, access "http://localhost:8080/accounts"
@@ -28,7 +31,7 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 //   Incognito browser.)
 // - Access "http://localhost:8080/logout" and click "Log out" button
 
-// TODO-02b: Observe the default security behaviour of the Spring
+// TO-DO-02b: Observe the default security behaviour of the Spring
 //           Boot application using "curl" (or "Postman")
 // - Open a terminal window (if you are using "curl")
 // - Run "curl -i localhost:8080/accounts" and observe 401 response
@@ -36,9 +39,9 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 //   and observe a successful response
 
 @SpringBootApplication
-//TODO-03: Import security configuration class
+//TO-DO-03: Import security configuration class
 //- Uncomment the line below and go to RestSecurityConfig class
-//@Import(RestSecurityConfig.class)
+@Import(RestSecurityConfig.class)
 @EntityScan("rewards.internal")
 public class RestWsApplication {
 
@@ -48,7 +51,7 @@ public class RestWsApplication {
 
 }
 
-// TODO-11: Test the method security using browser or curl
+// TO-DO-11: Test the method security using browser or curl
 // - Re-run this application
 // - Using Chrome Incognito browser, access
 //   http://localhost:8080/authorities?username=user
@@ -70,7 +73,7 @@ public class RestWsApplication {
 
 // ------------------------------------------------
 
-// TODO-15 (Optional): Verify that the newly added custom UserDetailsService works
+// TO-DO-15 (Optional): Verify that the newly added custom UserDetailsService works
 // - Re-run this application
 // - Using Chrome Incognito browser, access
 //   http://localhost:8080/accounts/0
@@ -87,7 +90,7 @@ public class RestWsApplication {
 
 // ------------------------------------------------
 
-// TODO-19 (Optional): Verify that the newly added custom AuthenticationProvider works
+// TO-DO-19 (Optional): Verify that the newly added custom AuthenticationProvider works
 // - Re-run this application
 // - Using Chrome Incognito browser, access
 //   http://localhost:8080/accounts/0

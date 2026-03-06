@@ -958,3 +958,342 @@ Repository Slice Testing with @DataJpaTest
     Uses an embedded in-memory database
         Replaces any explicit or auto-configured DataSource
         The @AutoConfigureTestDatabase annotation can be used to override these settings
+======================
+#                    #
+#  Securing REST A-  #
+#  pplication with   #
+#  Spring Security   #
+#                    #
+======================
+Principal - User, device or system that performs an action
+Authentication - Establishing that a principal's credentials are valid. Through authentication, the principal's claims are validated.
+
+There are many authentication mechanisms. e.g. Basic (credentials are sent in BASE64 format via HTTP headers), Digest, Form, X.509, OAuth 2.0 / OIDC. There are many storage options for credentials and authority data. e.g. in-memory (for development only), Database, LDAP, Properties file
+Authorization - Deciding if a principal is allowed to access a resource. In authorization, the principal is granted or denied access.
+Authority - Permission or credential enabling access (such as a role) to particular roles.
+Secured Resource - Resource that is being secured
+
+Spring security can be used on spring project. It has separation of concerns with decoupled business logic. Authentication and Authorization are decoupled, so authentication can be altered.
+                                                         delegates
+    [AUTHENTICATION_MANAGER]--      ->[SECURITY_INTERCEPTOR]-->[AUTHORIZATION_MANAGER]
+                        populates   |        |          |  v consults
+                             |   obtains     |  protects|  [CONFIG_ATTRIBUTES]
+  thread of execution        v      v        |          v  v describe
+----------------------->[SECURITY_CONTEXT]-->|        [SECURED_RESOURCE]
+     [AUTHENTICATION{PRINCIPAL+AUTHORITIES}]
+
+3 steps in setup and spring security configuration :-
+> Setup filter chain
+>> > Requires DelegatingFilterProxy
+
+Servlet Container:
+=================
+[CONFIGURED_BY_SPRING_BOOT]
+                        |
+                        v
+[WEB_USER]<-------->[DELEGATING_FILTER_PROXY]<-->[DISPATCHER_SERVLET]<------->
+    SpringApplicationCon^text:          ^
+    ====================v====           v
+                    [SPRING_SECURITY_FILTER_CHAIN]
+                     ^                      ^
+                     v                      v
+                    [FILTER1]>[FILTER2]>[FILTERN]
+
+    Query successful
+
+Spring Security Filters
+#	Filter Name	                            Main Purpose
+1	SecurityContextPersistenceFilter	    Establishes SecurityContext and maintains between HTTP requests
+2	LogoutFilter	                        Clears SecurityContextHolder when logout requested
+3	UsernamePasswordAuthenticationFilter	Puts Authentication into the SecurityContext on login request.
+4	ExceptionTranslationFilter	            Converts SpringSecurity exceptions into HTTP response or redirect
+5	AuthorizationFilter	                    Authorizes web requests based on config attributes and authorities
+
+                    [ WEB BROWSER ]
+                           |
+                           v
+        -------------------------------------------------
+        |  SecurityContextPersistenceFilter             |
+        |-----------------------------------------------|
+        |  - loads SecurityContext from session         |
+        |  - sets it on SecurityContextHolder (thread)  |
+        -------------------------------------------------
+                           |
+                           v
+        -------------------------------
+        |  LogoutFilter               |
+        |-----------------------------|
+        |  - does nothing (unless     |
+        |    logout request)          |
+        -------------------------------
+                           |
+                           v
+        ----------------------------------------------
+        |  UsernamePasswordAuthenticationFilter      |
+        |--------------------------------------------|
+        |  - does nothing (unless login request)     |
+        ----------------------------------------------
+                           |
+                           v
+        ----------------------------------------------
+        |  ExceptionTranslationFilter                |
+        |--------------------------------------------|
+        |  - handles Authentication / Access errors  |
+        ----------------------------------------------
+                           |
+                           v
+        -------------------------------------------------------
+        |  AuthorizationFilter                                |
+        |-----------------------------------------------------|
+        |  - consults security metadata (config attributes)   |
+        |  - obtains SecurityContext                          |
+        |  - delegates to AuthorizationManager                |
+        -------------------------------------------------------
+                           |
+                           v
+        =================== SECURED RESOURCE ===================
+                           |
+                           v
+        -------------------------------------------------
+        |  SecurityContextPersistenceFilter             |
+        |-----------------------------------------------|
+        |  - stores SecurityContext back into session   |
+        -------------------------------------------------
+                           |
+                           v
+                    [ WEB BROWSER ]
+
+
+> Configure security (authorization) rules
+> Setup web authentication
+
+Spring Boot Default Security Setup :-
+> Sets up a single in-memory user called “user”
+> Auto-generates a UUID password
+> Relies on Spring Security’s content-negotiation strategy to determine whether to use httpBasic or formLogin
+> All URLs require a logged-in user
+======================
+#                    #
+#  URL authorizati-  #
+#  on                #
+#                    #
+======================
+
+    @Configuration
+    public class SecurityConfig {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests((authz) -> authz
+                .requestMatchers("/signup", "/about").permitAll()
+                .requestMAtchers(HttpMethod.PUT, "accounts/edit").hasRole("ADMIN")
+                .requestMatchers("/accounts/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated())
+                .httpBasic(withDefaults());     -or-    .formLogin(form -> form
+                                                            .loginPage("/login")
+                                                            .permitAll()
+                                                        )
+                .logout(logout -> logout
+                    .logoutSuccessUrl("/home")
+                    .permitAll()
+                )
+            return http.build();
+        }
+
+        // Ant-style pattern matching
+        // /admin/* matches /admin/xxx
+        // /admin/* matches /admin/xxx/../xxx
+
+        @Bean
+        public UserDetailsService userDetailsService() {
+            PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+            UserDetails user =
+                User.withUsername("user").password(passwordEncoder.encode("user")).roles("USER").build();
+            UserDetails admin =
+                User.withUsername("admin").password(passwordEncoder.encode("admin")).roles("ADMIN").build();
+
+            // It generates password hash - e.g.: {bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG. 
+            // Identifier ({bcrypt}):This prefix tells Spring Security which PasswordEncoder to use.
+            // Algorithm Version ($2a$):This identifies the specific version of the Bcrypt algorithm.
+            // Strength/Cost Factor (10$):This represents the cost factor (log rounds) for the hashing algorithm. In this case, 2^10 iterations are used. A higher number makes it slower and more secure against brute-force attacks.
+            // Salt and Hash (dXJ3SW6G7P50lGmMkkmwe.20cQQubK3...):The remaining part consists of the generated salt and the hashed password itself.Because BCrypt includes a random salt, the same password will produce a different hash every time it is encoded.
+
+            return new InMemoryUserDetailsManager(user, admin);
+        }
+
+        @Bean
+        public WebSecurityCustomizer webSecurityCustomizer() {
+            return (web) -> web.ignoring().requestMatchers("/ignore1", "/ignore2");
+        }
+
+        @Bean
+        public UserDetailsManager userDetailsManager(DataSource dataSource) {
+            return new JdbcUserDetailsManager(dataSource);
+        }
+    }
+
+    protected interface UserDetailsService {
+        UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    }
+
+    protected interface AuthenticationProvider {
+        Authentication authenticate(Authentication authentication) throws AuthenticationException;
+        boolean supports(Class<?> authentication);
+    }
+
+    (1) HTTP REQUEST
+      |
+      v
++--------------------------------------------------+
+| BasicAuthenticationFilter                        |
+|--------------------------------------------------|
+| - extracts username & password                   |
+| - creates Authentication object                  |
++--------------------------------------------------+
+      |
+      | (2) creates
+      v
++--------------------------------------------------+
+| <<Authentication>>                               |
+| UsernamePasswordAuthenticationToken              |
+|--------------------------------------------------|
+| principal    = username                          |
+| credentials  = password                          |
+| authenticated= false                             |
+| authorities  = not set                           |
++--------------------------------------------------+
+      |
+      | (3) delegates authentication request
+      v
++--------------------------------------------------+
+| AuthenticationManager                            |
+| <<interface>>                                    |
++--------------------------------------------------+
+      |
+      | (4) implemented by
+      v
++--------------------------------------------------+
+| ProviderManager                                  |
+|--------------------------------------------------|
+| - selects appropriate AuthenticationProvider     |    // Jaas/Ldap/OpenIDAuthenticationProvider
++--------------------------------------------------+
+      |
+      | (5) delegates authenticate()
+      v
++--------------------------------------------------------------+
+| <<AuthenticationProvider>>                                   |
+| DaoAuthenticationProvider                                    |
+|--------------------------------------------------------------|
+| - supports UsernamePasswordAuthenticationToken               |
+| - validates credentials                                      |
++--------------------------------------------------------------+
+      |
+      | (6) calls
+      v
++--------------------------------------------------+
+| UserDetailsService                               |
+| <<interface>>                                    |
++--------------------------------------------------+
+      |
+      | (6.1) implemented by
+      v
++--------------------------------------------------+
+| UserDetailsService Implementations               |
+|--------------------------------------------------|
+| - JDBC / JPA / LDAP / In-Memory / Custom         |
++--------------------------------------------------+
+      |
+      | (6.2) loadUserByUsername(username)
+      v
++--------------------------------------------------+
+| UserDetails                                      |
+|--------------------------------------------------|
+| - username                                       |
+| - password (hashed)                              |
+| - authorities / roles                            |
+| - account status flags                           |
++--------------------------------------------------+
+      |
+      | (7) returns UserDetails
+      v
++--------------------------------------------------------------+
+| DaoAuthenticationProvider                                    |
+|--------------------------------------------------------------|
+| - compares passwords                                         |
+| - builds authenticated Authentication                        |
++--------------------------------------------------------------+
+
+      |
+      | (8) returns
+      v
++--------------------------------------------------+
+| <<Authentication>>                               |
+| UsernamePasswordAuthenticationToken              |
+|--------------------------------------------------|
+| authenticated = true                             |
+| authorities   = ROLE_USER                        |
++--------------------------------------------------+
+      |
+      | (9) stored in thread-bound context
+      v
++--------------------------------------------------------------+
+| SecurityContextHolder                                        |
+|--------------------------------------------------------------|
+| - associates SecurityContext with current thread             |
+|                                                              |
+|   +------------------------------------------+               |
+|   | SecurityContext                          |               |
+|   |------------------------------------------|               |
+|   | Authentication (authenticated = true)    |               |
+|   +------------------------------------------+               |
++--------------------------------------------------------------+
+
+AuthenticationProvider & UserDetailsService :
++ Out-of-the-box AuthenticationProvider implementations:
+    DaoAuthenticationProvider, LdapAuthenticationProvider, OpenIDAuthenticationProvider, RememberMeAuthenticationProvider, etc.
++ DaoAuthenticationProvider retrieves user details from a configured UserDetailsService
++ Out-of-the-box UserDetailsService implementations:
+    InMemoryUserDetailsManager uses in-memory identity store
+    JdbcUserDetailsManager uses database identity store
+    LdapUserDetailsManager uses Ldap identity store
+
+Password encoders - SHA (Deprecated), MD5 (Deprecated) and BCrypt (Current), are used hash the password. Passwords are not encrypted and decrypted. DelegatingPasswordEncoder are used as future-proof mechanisms.
+======================
+#                    #
+#  Method security   #
+#  and testing       #
+#                    #
+======================
+Spring Security uses AOP for method-level security. The annotations used are Spring or JSR-250. Recommended security architecture -
+
+    [ALL_OTHER_INTERFACES]
+              ^
+              |
+              v
+    [SECURE_SERVICE_LAYER]
+              ^
+              |
+              v
+    [DATA_ACCESS_LAYER]
+              ^
+              |
+              v
+    [INFRASTRUCTURE_LAYER]
+
+                                                            [ACCOUNT_SERVICE]
+                          Spring Security Proxy:                ^
+transfer("$50", 1, 2)     ======================                |
+<------------------------>[SPRING_SECURITY_INTERCEPTOR]<--->[ACCOUNT_SERVICE_IMPL](target)
+                                |
+                                v
+                            [AUTHORISATION_MANAGER]
+
+    @€nableMethodSecurity // should be added to configuration class
+
+
+    public class ItemManager {
+        @PreAuthorize("hasRole('MEMBER') && #order.owner.name == principal.username")
+        public Item findItem(Order order, long itemNumber) {
+            //
+        }
+    }

@@ -7,35 +7,54 @@ import accounts.services.AccountService;
 import config.RestSecurityConfig;
 import rewards.internal.account.Account;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.AutoConfigureDataJpa;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
+//import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// TODO-20 (Optional): Perform security testing for the user added
+// TO-DO-20 (Optional): Perform security testing for the user added
 //          through custom AuthenticationProvider
 // - Remove @Disabled annotation from the test and run it
 // - Make sure the test passes
 
-@WebMvcTest(AccountController.class)
-@ContextConfiguration(classes = {RestWsApplication.class, RestSecurityConfig.class, CustomAuthenticationProvider.class})
+//@WebMvcTest(AccountController.class)
+//@ContextConfiguration(classes = {RestWsApplication.class, RestSecurityConfig.class, CustomAuthenticationProvider.class})
+@SpringBootTest(classes = {RestWsApplication.class, RestSecurityConfig.class, CustomAuthenticationProvider.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccountControllerCustomAuthenticationProviderTests {
 
+//    @Autowired
+//    private MockMvc mockMvc;
+    
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mockMvc;
+
+    @BeforeAll
+    void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+    }
 
     @MockitoBean
     private AccountManager accountManager;
@@ -44,7 +63,7 @@ public class AccountControllerCustomAuthenticationProviderTests {
     private AccountService accountService;
 
     @Test
-    @Disabled
+//    @Disabled
     public void accountDetails_with_spring_credentials_should_return_200() throws Exception {
 
         // arrange
