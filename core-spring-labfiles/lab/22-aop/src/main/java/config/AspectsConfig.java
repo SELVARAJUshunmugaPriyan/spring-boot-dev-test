@@ -22,7 +22,7 @@ import rewards.internal.monitor.jamon.JamonMonitorFactory;
 public class AspectsConfig {
 
 	@Bean
-	public MonitorFactory monitorFactory(){
+	MonitorFactory monitorFactory(){
 		return new JamonMonitorFactory();
 	}
 	

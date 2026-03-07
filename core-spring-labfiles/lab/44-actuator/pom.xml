@@ -26,7 +26,7 @@
         <!--
         // Defines: Account, Beneficiary, AccountManager.
         //
-        // NOTE: Dependencies for JPA and Spring are also provided
+        // note: Dependencies for JPA and Spring are also provided
         //       by this project - see rewards-db/pom.xml.
         -->
         <dependency>

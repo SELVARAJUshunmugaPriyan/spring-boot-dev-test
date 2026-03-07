@@ -4,10 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hello-lib</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
     <parent>
         <groupId>io.spring.training.core-spring</groupId>
-        <artifactId>parentHelloServiceProject</artifactId>
+        <artifactId>33-autoconfig-helloworld</artifactId>
         <version>1.0</version>
     </parent>
 </project>

@@ -56,7 +56,7 @@ public class RestSecurityConfig {
 	// TO-DO-14b (Optional): Remove the InMemoryUserDetailsManager definition
 	// - Comment the @Bean annotation below
 	
-//	@Bean
+	@Bean
     InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
 
 		// TO-DO-05: Add three users with corresponding roles:
@@ -69,7 +69,12 @@ public class RestSecurityConfig {
 		UserDetails admin = User.withUsername("admin").password(passwordEncoder.encode("admin")).roles("USER", "ADMIN").build();
 		UserDetails superadmin = User.withUsername("superadmin").password(passwordEncoder.encode("superadmin")).roles("USER", "ADMIN", "SUPERADMIN").build();
 
-		return new InMemoryUserDetailsManager(user, admin, superadmin /* Add new users comma-separated here */);
+		UserDetails mary = User.withUsername("mary").password(passwordEncoder.encode("mary")).roles("USER").build();
+		UserDetails joe = User.withUsername("joe").password(passwordEncoder.encode("joe")).roles("USER", "ADMIN").build();
+
+		UserDetails spring = User.withUsername("spring").password(passwordEncoder.encode("spring")).roles("ADMIN").build();
+		
+		return new InMemoryUserDetailsManager(user, admin, superadmin, mary, joe, spring /* Add new users comma-separated here */);
 	}
     
     @Bean

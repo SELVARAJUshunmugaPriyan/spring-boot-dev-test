@@ -42,7 +42,7 @@ public class DbConfig {
 	 * testing
 	 */
 	@Bean
-	public DataSource dataSource() {
+	DataSource dataSource() {
 		return (new EmbeddedDatabaseBuilder()) //
 				.addScript("classpath:rewards/testdb/schema.sql") //
 				.addScript("classpath:rewards/testdb/data.sql").build();
@@ -52,7 +52,7 @@ public class DbConfig {
 	 * Transaction Manager For JPA
 	 */
 	@Bean
-	public PlatformTransactionManager transactionManager() throws Exception {
+	PlatformTransactionManager transactionManager() throws Exception {
 		return new JpaTransactionManager();
 	}
 
@@ -60,7 +60,7 @@ public class DbConfig {
 	 * Create an EntityManagerFactoryBean.
 	 */
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(JpaVendorAdapter adapter) {
+	LocalContainerEntityManagerFactoryBean entityManagerFactory(JpaVendorAdapter adapter) {
 
 		// Tell the underlying implementation what type of database we are using - a
 		// hint to generate better SQL

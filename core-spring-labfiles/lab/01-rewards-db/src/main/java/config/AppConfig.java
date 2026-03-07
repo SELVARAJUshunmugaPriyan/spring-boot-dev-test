@@ -25,22 +25,22 @@ import javax.sql.DataSource;
 public class AppConfig {
 
 	@Bean
-	public AccountManager accountManager() {
+	AccountManager accountManager() {
 		return new JpaAccountManager();
 	}
 
 	@Bean
-	public AccountRepository accountRepository() {
+	AccountRepository accountRepository() {
 		return new JpaAccountRepository();
 	}
 
 	@Bean
-	public RestaurantRepository restaurantRepository() {
+	RestaurantRepository restaurantRepository() {
 		return new JpaRestaurantRepository();
 	}
 
 	@Bean
-	public RewardRepository rewardRepository(DataSource dataSource) {
+	RewardRepository rewardRepository(DataSource dataSource) {
 		return new JdbcRewardRepository(dataSource);
 	}
 

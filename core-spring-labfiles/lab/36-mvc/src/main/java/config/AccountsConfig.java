@@ -36,7 +36,7 @@ public class AccountsConfig implements WebMvcConfigurer {
 	 * @return The new account-manager instance.
 	 */
 	@Bean
-	public AccountManager accountManager() {
+	AccountManager accountManager() {
 		return new JpaAccountManager();
 	}
 

@@ -66,8 +66,8 @@ public class AccountController {
 	 * given id.
 	 */
 	@GetMapping(value = "/accounts/{accountId}/beneficiaries/{beneficiaryName}")
-	public Beneficiary getBeneficiary(@PathVariable("accountId") int accountId,
-			@PathVariable("beneficiaryName") String beneficiaryName) {
+	public Beneficiary getBeneficiary(@PathVariable int accountId,
+			@PathVariable String beneficiaryName) {
 		return retrieveAccount(accountId).getBeneficiary(beneficiaryName);
 	}
 
